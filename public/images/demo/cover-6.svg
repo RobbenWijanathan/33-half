@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" role="img" aria-label="THE LAST LIGHT demo artwork">
+<rect width="600" height="600" fill="#e1cf93"/>
+<circle cx="300" cy="275" r="170" fill="#413927"/><rect x="0" y="320" width="600" height="210" fill="#e1cf93"/><path d="M0 320H600" stroke="#413927" stroke-width="18"/>
+<rect y="510" width="600" height="90" fill="#413927"/>
+<text x="34" y="548" fill="#e1cf93" font-family="Arial,sans-serif" font-size="22" font-weight="bold" letter-spacing="2">THE LAST LIGHT</text>
+<text x="34" y="577" fill="#e1cf93" font-family="Arial,sans-serif" font-size="13" letter-spacing="2">ARLO VALE · 33½</text>
+</svg>

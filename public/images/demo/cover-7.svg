@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" role="img" aria-label="SMALL HOURS demo artwork">
+<rect width="600" height="600" fill="#b3badc"/>
+<circle cx="300" cy="470" r="100" fill="none" stroke="#292d51" stroke-width="14"/><circle cx="300" cy="470" r="147" fill="none" stroke="#292d51" stroke-width="14"/><circle cx="300" cy="470" r="194" fill="none" stroke="#292d51" stroke-width="14"/><circle cx="300" cy="470" r="241" fill="none" stroke="#292d51" stroke-width="14"/><circle cx="300" cy="470" r="288" fill="none" stroke="#292d51" stroke-width="14"/><circle cx="300" cy="470" r="335" fill="none" stroke="#292d51" stroke-width="14"/><circle cx="300" cy="470" r="382" fill="none" stroke="#292d51" stroke-width="14"/><circle cx="300" cy="470" r="429" fill="none" stroke="#292d51" stroke-width="14"/>
+<rect y="510" width="600" height="90" fill="#292d51"/>
+<text x="34" y="548" fill="#b3badc" font-family="Arial,sans-serif" font-size="22" font-weight="bold" letter-spacing="2">SMALL HOURS</text>
+<text x="34" y="577" fill="#b3badc" font-family="Arial,sans-serif" font-size="13" letter-spacing="2">MIRA SOL · 33½</text>
+</svg>

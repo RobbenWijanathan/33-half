@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" role="img" aria-label="BLUE HOUR NOTES demo artwork">
+<rect width="600" height="600" fill="#e7b99b"/>
+<circle cx="300" cy="270" r="205" fill="#403332"/><circle cx="390" cy="200" r="160" fill="#e7b99b"/><circle cx="260" cy="315" r="55" fill="#e7b99b"/>
+<rect y="510" width="600" height="90" fill="#403332"/>
+<text x="34" y="548" fill="#e7b99b" font-family="Arial,sans-serif" font-size="22" font-weight="bold" letter-spacing="2">BLUE HOUR NOTES</text>
+<text x="34" y="577" fill="#e7b99b" font-family="Arial,sans-serif" font-size="13" letter-spacing="2">NALA JUNE · 33½</text>
+</svg>

@@ -1,0 +1,2 @@
+@props(['product', 'label' => 'Add to cart'])
+<form method="POST" action="{{ route('cart.add', $product) }}" class="add-to-cart-form">@csrf<x-quantity-selector :max="$product->is_preorder ? 99 : max(1, $product->stock)" /><button class="button button-dark" type="submit" @disabled($product->stock < 1 && ! $product->is_preorder)>{{ $product->stock < 1 && ! $product->is_preorder ? 'Sold out' : $label }} <span aria-hidden="true">↗</span></button></form>
