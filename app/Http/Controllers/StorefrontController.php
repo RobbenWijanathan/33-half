@@ -12,7 +12,7 @@ class StorefrontController extends Controller
     public function home(): View
     {
         return view('pages.home', [
-            'newArrivals' => Product::vinyl()->with('artists')->where('is_preorder', false)->latest('release_date')->take(4)->get(),
+            'newArrivals' => Product::vinyl()->newArrivals()->with('artists')->latest('release_date')->take(4)->get(),
             'featured' => Product::vinyl()->with('artists')->where('is_featured', true)->take(4)->get(),
             'preorders' => Product::vinyl()->with('artists')->where('is_preorder', true)->take(4)->get(),
             'merchandise' => Product::merchandise()->take(4)->get(),

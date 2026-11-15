@@ -23,18 +23,19 @@ class CatalogSeeder extends Seeder
                 'bio' => 'An independent artist exploring sounds between familiar genres.',
             ])]);
 
+        // The date column is days since release (negative = still to come), so demo data stays fresh.
         $records = [
-            ['Afterimage', 'Mira Sol', 'Electronic', 'Half Light', 28, '2026-09-18', 1, true, false],
-            ['Nothing Stays Still', 'The Night Index', 'Indie', 'Loose Ends', 32, '2026-08-21', 2, true, false],
-            ['Blue Hour Notes', 'Nala June', 'Jazz', 'After Hours', 30, '2026-07-10', 3, true, false],
-            ['Forms in Motion', 'Soft Geometry', 'Experimental', 'Half Light', 35, '2026-06-05', 4, false, false],
-            ['Shoreline Radio', 'Low Tide Assembly', 'Ambient', 'Loose Ends', 29, '2026-10-20', 5, false, true],
-            ['The Last Light', 'Arlo Vale', 'Soul', 'After Hours', 34, '2026-11-12', 6, false, true],
-            ['Small Hours', 'Mira Sol', 'Ambient', 'Half Light', 27, '2026-04-17', 7, false, false],
-            ['No Fixed Address', 'The Night Index', 'Indie', 'Loose Ends', 31, '2026-03-06', 8, false, false],
+            ['Afterimage', 'Mira Sol', 'Electronic', 'Half Light', 28, 12, 1, true, false],
+            ['Nothing Stays Still', 'The Night Index', 'Indie', 'Loose Ends', 32, 40, 2, true, false],
+            ['Blue Hour Notes', 'Nala June', 'Jazz', 'After Hours', 30, 75, 3, true, false],
+            ['Forms in Motion', 'Soft Geometry', 'Experimental', 'Half Light', 35, 120, 4, false, false],
+            ['Shoreline Radio', 'Low Tide Assembly', 'Ambient', 'Loose Ends', 29, -14, 5, false, true],
+            ['The Last Light', 'Arlo Vale', 'Soul', 'After Hours', 34, -30, 6, false, true],
+            ['Small Hours', 'Mira Sol', 'Ambient', 'Half Light', 27, 210, 7, false, false],
+            ['No Fixed Address', 'The Night Index', 'Indie', 'Loose Ends', 31, 250, 8, false, false],
         ];
 
-        foreach ($records as [$name, $artist, $genre, $label, $price, $release, $cover, $featured, $preorder]) {
+        foreach ($records as [$name, $artist, $genre, $label, $price, $daysAgo, $cover, $featured, $preorder]) {
             $product = Product::updateOrCreate(['slug' => Str::slug($name)], [
                 'name' => $name,
                 'description' => 'A demo release for the 33½ storefront. Replace this description, artwork, and audio with your own catalog content.',
@@ -44,7 +45,7 @@ class CatalogSeeder extends Seeder
                 'cover_image' => 'images/demo/cover-'.$cover.'.svg',
                 'audio_preview_url' => 'audio/demo-preview.wav',
                 'preview_start_time' => 0,
-                'release_date' => $release,
+                'release_date' => today()->subDays($daysAgo)->toDateString(),
                 'format' => '12" LP',
                 'label_id' => $labels[$label]->id,
                 'is_featured' => $featured,

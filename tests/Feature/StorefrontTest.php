@@ -40,4 +40,46 @@ class StorefrontTest extends TestCase
         $this->delete(route('cart.remove', $product))->assertRedirect();
         $this->get('/cart')->assertSee('Your cart is empty');
     }
+
+    public function test_new_arrivals_lists_only_recent_releases_newest_first(): void
+    {
+        // Seeded: Afterimage (12 days old), Nothing Stays Still (40), Blue Hour Notes (75) are inside the window.
+        $this->get('/new-arrivals')->assertOk()
+            ->assertSeeInOrder(['Afterimage', 'Nothing Stays Still', 'Blue Hour Notes'])
+            ->assertDontSee('Forms in Motion')   // released 120 days ago
+            ->assertDontSee('Shoreline Radio')   // pre-order
+            ->assertDontSee('Studio Tee');       // no release date
+
+        $this->get('/new-arrivals?sort=price-high')->assertOk()
+            ->assertSeeInOrder(['Nothing Stays Still', 'Blue Hour Notes', 'Afterimage']);
+    }
+
+    public function test_new_arrival_window_edges_and_badge(): void
+    {
+        $edge = Product::where('slug', 'afterimage')->firstOrFail();
+
+        $edge->update(['release_date' => today()->subDays(Product::NEW_ARRIVAL_DAYS)]);
+        $this->assertTrue($edge->isNewArrival());
+        $this->assertTrue(Product::newArrivals()->whereKey($edge->id)->exists());
+
+        $edge->update(['release_date' => today()->subDays(Product::NEW_ARRIVAL_DAYS + 1)]);
+        $this->assertFalse($edge->isNewArrival());
+        $this->assertFalse(Product::newArrivals()->whereKey($edge->id)->exists());
+
+        $edge->update(['release_date' => today()->addDay()]);
+        $this->assertFalse($edge->isNewArrival());
+        $this->assertFalse(Product::newArrivals()->whereKey($edge->id)->exists());
+
+        $this->get('/records/blue-hour-notes')->assertOk();
+        $this->get('/vinyl')->assertSee('product-badge-new', false);
+        $this->get('/pre-orders')->assertDontSee('product-badge-new', false);
+    }
+
+    public function test_home_hides_the_new_arrivals_section_when_nothing_is_new(): void
+    {
+        $this->get('/')->assertSee('Fresh on the shelf');
+        Product::query()->update(['release_date' => today()->subYear()]);
+        $this->get('/')->assertOk()->assertDontSee('Fresh on the shelf');
+        $this->get('/new-arrivals')->assertOk()->assertSee('Nothing in this section yet');
+    }
 }
