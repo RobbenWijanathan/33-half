@@ -71,6 +71,7 @@ p { line-height: 1.6; }
 .product-media img { width: 100%; height: 100%; object-fit: cover; transition: transform .35s; }
 .product-card:hover .product-media img { transform: scale(1.035); }
 .product-badge { position: absolute; left: 12px; top: 12px; background: var(--paper); padding: 6px 9px; font-size: .58rem; text-transform: uppercase; letter-spacing: .13em; font-weight: 700; }
+.product-badge-new { background: var(--accent); color: var(--ink); }
 .preview-button { position: absolute; right: 12px; bottom: 12px; display: grid; place-items: center; width: 39px; height: 39px; border: 0; border-radius: 50%; background: var(--paper); color: var(--ink); box-shadow: 0 3px 12px #0002; }
 .preview-button:hover { background: var(--accent); }
 .audio-indicator { display: none; align-items: center; gap: 2px; height: 15px; }
@@ -79,6 +80,15 @@ p { line-height: 1.6; }
 .audio-indicator i:nth-child(3) { animation-delay: .4s; }
 .is-playing .audio-indicator { display: flex; }
 .is-playing .preview-icon { display: none; }
+.is-loading .preview-icon { animation: preview-wait .8s ease-in-out infinite alternate; }
+.is-unavailable .preview-button, .preview-button.is-unavailable { color: var(--muted); }
+.is-unavailable .preview-icon { text-decoration: line-through; }
+/* A ring around the button fills over the length of the preview. */
+@property --preview-progress { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
+.preview-button::after { content: ''; position: absolute; inset: -4px; border-radius: 50%; pointer-events: none; opacity: 0; background: conic-gradient(var(--accent) var(--preview-progress), transparent 0); -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px)); mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px)); }
+.is-playing .preview-button::after, .preview-button.is-playing::after { opacity: 1; animation: preview-progress var(--preview-duration, 10s) linear forwards; }
+@keyframes preview-progress { to { --preview-progress: 360deg; } }
+@keyframes preview-wait { from { opacity: 1; } to { opacity: .25; } }
 @keyframes meter { to { height: 3px; } }
 .product-meta { display: flex; justify-content: space-between; gap: 12px; color: var(--muted); font-size: .68rem; margin: 15px 0 7px; }
 .product-title-row { display: flex; justify-content: space-between; gap: 15px; align-items: start; }
@@ -149,7 +159,7 @@ p { line-height: 1.6; }
 .detail-price { font-size: 1.4rem; font-weight: 700; margin-top: 40px; }
 .detail-description { color: var(--muted); max-width: 500px; }
 .detail-preview { display: flex; align-items: center; gap: 12px; margin: 30px 0; font-size: .75rem; }
-.detail-preview .preview-button { position: static; border: 1px solid var(--line); box-shadow: none; }
+.detail-preview .preview-button { position: relative; right: auto; bottom: auto; border: 1px solid var(--line); box-shadow: none; }
 .add-to-cart-form { display: flex; gap: 10px; align-items: stretch; }
 .quantity-selector input { width: 80px; min-height: 52px; padding: 10px; border: 1px solid var(--line); background: transparent; text-align: center; }
 .add-to-cart-form .button { flex: 1; }
@@ -175,7 +185,7 @@ p { line-height: 1.6; }
 .crate-counter { text-align: right; font-size: .7rem; letter-spacing: .12em; }
 .crate-counter span { display: block; margin-bottom: 22px; }
 .crate-counter button, .crate-controls button { background: none; border: 0; color: var(--accent); font-size: .8rem; font-weight: 700; }
-.crate-stage { padding-top: 45px; padding-bottom: 45px; }
+.crate-stage { padding-top: 45px; padding-bottom: 45px; touch-action: pan-y; }
 .crate-card { display: grid; grid-template-columns: 1fr .9fr; gap: 7vw; align-items: center; }
 .crate-card[hidden] { display: none; }
 .crate-art { position: relative; max-width: 620px; }
@@ -186,7 +196,7 @@ p { line-height: 1.6; }
 .crate-artist { font-size: 1.4rem; }
 .crate-description { color: #aaa; max-width: 450px; }
 .crate-preview-row { display: flex; align-items: center; gap: 12px; font-size: .72rem; color: #aaa; }
-.crate-preview-row .preview-button { position: static; box-shadow: none; }
+.crate-preview-row .preview-button { position: relative; right: auto; bottom: auto; box-shadow: none; }
 .crate-details dl { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 40px 0; }
 .crate-details dl div { border-top: 1px solid #50534f; padding-top: 10px; }
 .crate-details dt { font-size: .62rem; text-transform: uppercase; color: #aaa; letter-spacing: .1em; margin-bottom: 7px; }
@@ -194,7 +204,8 @@ p { line-height: 1.6; }
 .crate-actions { display: flex; gap: 10px; flex-wrap: wrap; }
 .crate-actions .add-to-cart-form .quantity-selector { display: none; }
 .crate-actions .button-dark { background: var(--accent); color: var(--ink); }
-.crate-controls { display: flex; justify-content: space-between; border-top: 1px solid #50534f; padding-top: 25px; }
+.crate-controls { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #50534f; padding-top: 8px; padding-bottom: 8px; position: sticky; bottom: 0; z-index: 2; background: #202220; }
+.crate-controls button { min-height: 44px; padding: 0; }
 .crate-controls span { font-size: .7rem; color: #aaa; }
 .cart-layout { display: grid; grid-template-columns: 1fr 300px; gap: 70px; padding-top: 50px; padding-bottom: 120px; }
 .cart-item { display: grid; grid-template-columns: 110px 1fr auto; gap: 25px; align-items: start; padding: 22px 0; border-bottom: 1px solid var(--line); }

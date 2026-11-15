@@ -18,7 +18,7 @@
         <p class="detail-price">${{ number_format($product->price, 2) }}</p>
         <p class="detail-description">{{ $product->description }}</p>
         @if($product->audio_preview_url)
-            <div class="detail-preview"><x-audio-preview-control :product="$product" /><span>Listen to a short preview</span></div>
+            <div class="detail-preview"><x-audio-preview-control :product="$product" /><span data-preview-label>Listen to a short preview</span></div>
         @endif
         <x-add-to-cart-button :product="$product" />
         <p class="detail-note">{{ $product->is_preorder ? 'Pre-order item · fulfillment details to be added.' : ($product->stock > 0 ? $product->stock.' in stock' : 'Currently unavailable') }}</p>

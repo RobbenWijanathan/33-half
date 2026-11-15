@@ -29,7 +29,13 @@ class CatalogController extends Controller
 
     public function newArrivals(Request $request): View
     {
-        return $this->listing($request, Product::query()->where('is_preorder', false), 'New arrivals', 'new-arrivals');
+        return $this->listing(
+            $request,
+            Product::newArrivals(),
+            'New arrivals',
+            'new-arrivals',
+            'Everything that landed on the shelf in the last '.Product::NEW_ARRIVAL_DAYS.' days, newest first.',
+        );
     }
 
     public function preorders(Request $request): View
@@ -87,7 +93,7 @@ class CatalogController extends Controller
         ]);
     }
 
-    private function listing(Request $request, Builder $query, string $title, string $section): View
+    private function listing(Request $request, Builder $query, string $title, string $section, ?string $description = null): View
     {
         $filters = $request->validate([
             'q' => ['nullable', 'string', 'max:100'],
@@ -133,12 +139,13 @@ class CatalogController extends Controller
             'price-low' => $query->orderBy('price'),
             'price-high' => $query->orderByDesc('price'),
             'name' => $query->orderBy('name'),
-            default => $query->latest('created_at'),
+            default => $query->orderByDesc('release_date')->latest('created_at')->orderByDesc('id'),
         };
 
         return view('pages.catalog', [
             'title' => $title,
             'section' => $section,
+            'description' => $description ?? 'Browse the shelf. Follow a sound. Find your next favorite.',
             'products' => $query->with('artists')->paginate(12)->withQueryString(),
             'genres' => Genre::orderBy('name')->get(),
             'artists' => Artist::orderBy('name')->get(),

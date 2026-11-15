@@ -4,10 +4,25 @@ const stage = document.querySelector('[data-crate-stage]');
 if (stage) {
     const cards = [...stage.querySelectorAll('[data-crate-card]')];
     const counter = document.querySelector('[data-crate-counter]');
+    const storageKey = 'crate-digging';
     let order = cards.map((_, index) => index);
     let position = 0;
-    let lastWheel = 0;
-    let touchStartY = null;
+    let touchStart = null;
+
+    // Remember the shuffle and the open record, so a reload (for example after "Add") keeps your place.
+    const remember = () => {
+        try { sessionStorage.setItem(storageKey, JSON.stringify({ order, position })); } catch { /* storage unavailable */ }
+    };
+    const restore = () => {
+        try {
+            const saved = JSON.parse(sessionStorage.getItem(storageKey));
+            const valid = Array.isArray(saved?.order) && saved.order.length === cards.length
+                && [...saved.order].sort((a, b) => a - b).every((value, index) => value === index);
+            if (!valid) return;
+            order = saved.order;
+            position = Number.isInteger(saved.position) ? saved.position : 0;
+        } catch { /* nothing saved */ }
+    };
 
     const show = (next, shouldPlay = true) => {
         if (!cards.length) return;
@@ -17,6 +32,7 @@ if (stage) {
         const card = cards[order[position]];
         card.hidden = false;
         counter.textContent = `${String(position + 1).padStart(2, '0')} / ${String(cards.length).padStart(2, '0')}`;
+        remember();
         if (shouldPlay && preview.hasInteracted()) preview.play(card, card.dataset.audioUrl, card.dataset.startTime);
     };
 
@@ -29,22 +45,26 @@ if (stage) {
         }
         show(0);
     });
-    stage.addEventListener('wheel', (event) => {
-        if (Math.abs(event.deltaY) < 12 || Date.now() - lastWheel < 650) return;
-        lastWheel = Date.now();
-        show(position + (event.deltaY > 0 ? 1 : -1));
+    // Vertical movement belongs to the page. Only a clearly sideways swipe flips the record.
+    stage.addEventListener('touchstart', (event) => {
+        const touch = event.changedTouches[0];
+        touchStart = event.touches.length === 1 ? { x: touch.clientX, y: touch.clientY } : null;
     }, { passive: true });
-    stage.addEventListener('touchstart', (event) => { touchStartY = event.changedTouches[0].clientY; }, { passive: true });
     stage.addEventListener('touchend', (event) => {
-        if (touchStartY === null) return;
-        const delta = touchStartY - event.changedTouches[0].clientY;
-        if (Math.abs(delta) > 45) show(position + (delta > 0 ? 1 : -1));
-        touchStartY = null;
+        if (!touchStart) return;
+        const touch = event.changedTouches[0];
+        const deltaX = touchStart.x - touch.clientX;
+        const deltaY = touchStart.y - touch.clientY;
+        touchStart = null;
+        if (Math.abs(deltaX) > 45 && Math.abs(deltaX) > Math.abs(deltaY) * 1.5) show(position + (deltaX > 0 ? 1 : -1));
     }, { passive: true });
+    stage.addEventListener('touchcancel', () => { touchStart = null; }, { passive: true });
     document.addEventListener('keydown', (event) => {
+        if (event.altKey || event.ctrlKey || event.metaKey) return;
         if (event.target instanceof HTMLElement && ['INPUT', 'SELECT', 'TEXTAREA'].includes(event.target.tagName)) return;
         if (event.key === 'ArrowRight') show(position + 1);
         if (event.key === 'ArrowLeft') show(position - 1);
     });
-    show(0, false);
+    restore();
+    show(position, false);
 }

@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('content')
 <x-hero />
-<section class="section container"><x-section-header eyebrow="Fresh on the shelf" title="New arrivals" :href="route('new-arrivals')" /><x-product-grid :products="$newArrivals" /></section>
+@if($newArrivals->isNotEmpty())<section class="section container"><x-section-header eyebrow="Fresh on the shelf" title="New arrivals" :href="route('new-arrivals')" /><x-product-grid :products="$newArrivals" /></section>@endif
 <section class="section section-tint"><div class="container"><x-section-header eyebrow="Staff picks" title="Featured records" :href="route('vinyl')" /><x-product-grid :products="$featured" /></div></section>
 <section class="section container"><x-section-header eyebrow="Find your frequency" title="Browse by genre" :href="route('genres.index')" /><x-genre-nav :genres="$genres" /></section>
 <section class="crate-promo"><div class="container crate-promo-inner"><div><span class="eyebrow light">A different way to browse</span><h2>Go where the<br>music takes you.</h2><p>Flip through records, hear a little of each, and find something unexpected.</p><a class="button button-light" href="{{ route('crate') }}">Start digging ↗</a></div><div class="crate-promo-mark" aria-hidden="true">33<span>½</span></div></div></section>
