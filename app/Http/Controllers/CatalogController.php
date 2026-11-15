@@ -8,6 +8,7 @@ use App\Models\Label;
 use App\Models\Product;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 
 class CatalogController extends Controller
@@ -106,10 +107,19 @@ class CatalogController extends Controller
             'sort' => ['nullable', 'in:newest,price-low,price-high,name'],
         ]);
 
+        // A reversed price range is an easy slip; read it the way it was meant.
+        if (isset($filters['min_price'], $filters['max_price']) && $filters['min_price'] > $filters['max_price']) {
+            [$filters['min_price'], $filters['max_price']] = [$filters['max_price'], $filters['min_price']];
+        }
+
         if ($term = $filters['q'] ?? null) {
             $query->where(function (Builder $search) use ($term) {
-                $search->where('name', 'like', '%'.$term.'%')
-                    ->orWhereHas('artists', fn (Builder $artists) => $artists->where('name', 'like', '%'.$term.'%'));
+                $like = '%'.$term.'%';
+                $search->where('name', 'like', $like)
+                    ->orWhere('description', 'like', $like)
+                    ->orWhereHas('artists', fn (Builder $artists) => $artists->where('name', 'like', $like))
+                    ->orWhereHas('genres', fn (Builder $genres) => $genres->where('name', 'like', $like))
+                    ->orWhereHas('label', fn (Builder $label) => $label->where('name', 'like', $like));
             });
         }
 
@@ -147,10 +157,42 @@ class CatalogController extends Controller
             'section' => $section,
             'description' => $description ?? 'Browse the shelf. Follow a sound. Find your next favorite.',
             'products' => $query->with('artists')->paginate(12)->withQueryString(),
-            'genres' => Genre::orderBy('name')->get(),
-            'artists' => Artist::orderBy('name')->get(),
-            'labels' => Label::orderBy('name')->get(),
+            'genres' => $genres = Genre::orderBy('name')->get(),
+            'artists' => $artists = Artist::orderBy('name')->get(),
+            'labels' => $labels = Label::orderBy('name')->get(),
             'filters' => $filters,
+            'activeFilters' => $this->activeFilters($request, $filters, $genres, $artists, $labels),
         ]);
+    }
+
+    /**
+     * The filters currently narrowing the listing, each with the URL that removes just that one.
+     *
+     * @return list<array{label: string, url: string}>
+     */
+    private function activeFilters(Request $request, array $filters, Collection $genres, Collection $artists, Collection $labels): array
+    {
+        $names = [
+            'q' => fn ($value) => 'Search: “'.$value.'”',
+            'genre' => fn ($value) => 'Genre: '.($genres->firstWhere('slug', $value)?->name ?? $value),
+            'artist' => fn ($value) => 'Artist: '.($artists->firstWhere('slug', $value)?->name ?? $value),
+            'label' => fn ($value) => 'Label: '.($labels->firstWhere('slug', $value)?->name ?? $value),
+            'min_price' => fn ($value) => 'From $'.rtrim(rtrim(number_format((float) $value, 2), '0'), '.'),
+            'max_price' => fn ($value) => 'Up to $'.rtrim(rtrim(number_format((float) $value, 2), '0'), '.'),
+            'availability' => fn ($value) => $value === 'preorder' ? 'Pre-order' : 'In stock',
+        ];
+
+        $active = [];
+        foreach ($names as $key => $describe) {
+            if (($filters[$key] ?? null) === null || $filters[$key] === '') {
+                continue;
+            }
+            $active[] = [
+                'label' => $describe($filters[$key]),
+                'url' => $request->fullUrlWithoutQuery([$key, 'page']),
+            ];
+        }
+
+        return $active;
     }
 }

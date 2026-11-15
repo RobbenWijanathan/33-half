@@ -75,6 +75,53 @@ class StorefrontTest extends TestCase
         $this->get('/pre-orders')->assertDontSee('product-badge-new', false);
     }
 
+    public function test_search_matches_genre_label_and_description_as_well_as_title_and_artist(): void
+    {
+        $this->get('/shop?q=jazz')->assertOk()->assertSee('Blue Hour Notes')->assertDontSee('Afterimage');
+        $this->get('/shop?q=after+hours')->assertOk()->assertSee('The Last Light')->assertDontSee('Afterimage');
+        $this->get('/shop?q=mira')->assertOk()->assertSee('Afterimage')->assertDontSee('Blue Hour Notes');
+
+        Product::where('slug', 'afterimage')->update(['description' => 'Pressed on translucent orange wax.']);
+        $this->get('/shop?q=translucent')->assertOk()->assertSee('Afterimage')->assertDontSee('Blue Hour Notes');
+    }
+
+    public function test_active_filters_show_as_removable_chips(): void
+    {
+        $response = $this->get('/vinyl?genre=jazz&q=blue&max_price=40&sort=name')->assertOk()
+            ->assertSee('Genre: Jazz')
+            ->assertSee('Search: “blue”')
+            ->assertSee('Up to $40')
+            ->assertSee('Clear all')
+            ->assertSee('1 item for “blue”');
+
+        // Removing one chip keeps the other filters and the sort.
+        $response->assertSee('href="'.e(url('/vinyl?q=blue&max_price=40&sort=name')).'"', false);
+
+        $this->get('/vinyl')->assertOk()->assertDontSee('filter-chips', false);
+    }
+
+    public function test_a_search_with_no_matches_explains_itself_and_offers_a_way_back(): void
+    {
+        $this->get('/shop?q=zzzz')->assertOk()
+            ->assertSee('No matches for “zzzz”')
+            ->assertSee('Clear search')
+            ->assertDontSee('Nothing in this section yet');
+
+        $this->get('/shop?genre=jazz&availability=preorder')->assertOk()
+            ->assertSee('Nothing matches these filters')
+            ->assertSee('Clear all filters');
+    }
+
+    public function test_a_reversed_price_range_is_read_the_way_it_was_meant(): void
+    {
+        $this->get('/vinyl?min_price=31&max_price=28')->assertOk()
+            ->assertSee('Afterimage')            // $28
+            ->assertSee('No Fixed Address')      // $31
+            ->assertDontSee('Forms in Motion')   // $35
+            ->assertSee('From $28')
+            ->assertSee('Up to $31');
+    }
+
     public function test_home_hides_the_new_arrivals_section_when_nothing_is_new(): void
     {
         $this->get('/')->assertSee('Fresh on the shelf');
