@@ -15,10 +15,16 @@
         <span class="eyebrow">{{ $product->is_preorder ? 'Pre-order' : ($product->product_type === 'merchandise' ? 'Merchandise' : 'Vinyl record') }}</span>
         <h1>{{ $product->name }}</h1>
         <p class="detail-artist">{{ $product->product_type === 'vinyl' ? $product->artists->pluck('name')->join(', ') : $product->merch_category }}</p>
-        <p class="detail-price">${{ number_format($product->price, 2) }}</p>
+        <p class="detail-price">{{ $product->formatted_price }}</p>
         <p class="detail-description">{{ $product->description }}</p>
         @if($product->audio_preview_url)
             <div class="detail-preview"><x-audio-preview-control :product="$product" /><span>Listen to a short preview</span></div>
+        @endif
+        @if($product->product_type === 'vinyl')
+            <div class="grade-boxes">
+                <div><span>Record</span><strong>{{ $product->record_grade ?: ($product->condition === 'new' ? 'New' : 'Not graded') }}</strong></div>
+                <div><span>Sleeve</span><strong>{{ $product->sleeve_grade ?: ($product->condition === 'new' ? 'New' : 'Not graded') }}</strong></div>
+            </div>
         @endif
         <x-add-to-cart-button :product="$product" />
         <p class="detail-note">{{ $product->is_preorder ? 'Pre-order item · fulfillment details to be added.' : ($product->stock > 0 ? $product->stock.' in stock' : 'Currently unavailable') }}</p>
@@ -45,4 +51,3 @@
     <x-product-grid :products="$related" />
 </section>
 @endsection
-

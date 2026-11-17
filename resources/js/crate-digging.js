@@ -1,50 +1,95 @@
+
 import { preview } from './audio-preview';
 
-const stage = document.querySelector('[data-crate-stage]');
-if (stage) {
-    const cards = [...stage.querySelectorAll('[data-crate-card]')];
-    const counter = document.querySelector('[data-crate-counter]');
-    let order = cards.map((_, index) => index);
-    let position = 0;
-    let lastWheel = 0;
-    let touchStartY = null;
+document.querySelectorAll('[data-record-carousel]').forEach((carousel) => {
+    const scroller = carousel.querySelector('[data-carousel-window]');
+    const records = [...carousel.querySelectorAll('[data-carousel-record]')];
+    const captions = [...carousel.querySelectorAll('[data-carousel-caption]')];
+    const previous = carousel.querySelector('[data-carousel-prev]');
+    const next = carousel.querySelector('[data-carousel-next]');
+    const counter = carousel.querySelector('[data-carousel-counter]');
+    const announcement = carousel.querySelector('[data-carousel-announcement]');
+    const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+    let focusedIndex = 0;
+    let scrollFrame = null;
 
-    const show = (next, shouldPlay = true) => {
-        if (!cards.length) return;
+    // The nearest cover to the center is the single source of truth for captions.
+    function focusRecord(index) {
+        if (index === focusedIndex) return;
         preview.stop();
-        position = (next + order.length) % order.length;
-        cards.forEach((card) => { card.hidden = true; card.classList.remove('is-playing'); });
-        const card = cards[order[position]];
-        card.hidden = false;
-        counter.textContent = `${String(position + 1).padStart(2, '0')} / ${String(cards.length).padStart(2, '0')}`;
-        if (shouldPlay && preview.hasInteracted()) preview.play(card, card.dataset.audioUrl, card.dataset.startTime);
-    };
+        focusedIndex = index;
 
-    document.querySelector('[data-crate-prev]')?.addEventListener('click', () => show(position - 1));
-    document.querySelector('[data-crate-next]')?.addEventListener('click', () => show(position + 1));
-    document.querySelector('[data-crate-random]')?.addEventListener('click', () => {
-        for (let i = order.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [order[i], order[j]] = [order[j], order[i]];
+        records.forEach((record, position) => {
+            const focused = position === index;
+            record.classList.toggle('is-focused', focused);
+            record.setAttribute('aria-pressed', String(focused));
+            record.tabIndex = focused ? 0 : -1;
+            captions[position].hidden = !focused;
+        });
+
+        previous.disabled = index === 0;
+        next.disabled = index === records.length - 1;
+        counter.textContent = (index + 1) + ' / ' + records.length;
+        announcement.textContent = captions[index].querySelector('h2').textContent;
+    }
+
+    function updateFromScroll() {
+        const bounds = scroller.getBoundingClientRect();
+        const center = bounds.top + scroller.clientHeight / 2;
+        let closest = 0;
+        let smallestDistance = Infinity;
+
+        records.forEach((record, index) => {
+            const cover = record.getBoundingClientRect();
+            const distance = Math.abs(cover.top + cover.height / 2 - center);
+            if (distance < smallestDistance) {
+                closest = index;
+                smallestDistance = distance;
+            }
+        });
+
+        focusRecord(closest);
+        scrollFrame = null;
+    }
+
+    function scrollToRecord(index, animate = true) {
+        const record = records[Math.max(0, Math.min(index, records.length - 1))];
+        const bounds = scroller.getBoundingClientRect();
+        const cover = record.getBoundingClientRect();
+
+        scroller.scrollTo({
+            top: scroller.scrollTop + cover.top + cover.height / 2 - bounds.top - scroller.clientHeight / 2,
+            behavior: animate && !reducedMotion.matches ? 'smooth' : 'instant',
+        });
+    }
+
+    scroller.addEventListener('scroll', () => {
+        if (scrollFrame === null) scrollFrame = requestAnimationFrame(updateFromScroll);
+    }, { passive: true });
+
+    records.forEach((record, index) => {
+        record.addEventListener('click', () => scrollToRecord(index));
+    });
+    previous.addEventListener('click', () => scrollToRecord(focusedIndex - 1));
+    next.addEventListener('click', () => scrollToRecord(focusedIndex + 1));
+
+    scroller.addEventListener('keydown', (event) => {
+        const destinations = {
+            ArrowUp: focusedIndex - 1,
+            ArrowDown: focusedIndex + 1,
+            Home: 0,
+            End: records.length - 1,
+        };
+        if (event.key in destinations) {
+            event.preventDefault();
+            scrollToRecord(destinations[event.key]);
         }
-        show(0);
     });
-    stage.addEventListener('wheel', (event) => {
-        if (Math.abs(event.deltaY) < 12 || Date.now() - lastWheel < 650) return;
-        lastWheel = Date.now();
-        show(position + (event.deltaY > 0 ? 1 : -1));
-    }, { passive: true });
-    stage.addEventListener('touchstart', (event) => { touchStartY = event.changedTouches[0].clientY; }, { passive: true });
-    stage.addEventListener('touchend', (event) => {
-        if (touchStartY === null) return;
-        const delta = touchStartY - event.changedTouches[0].clientY;
-        if (Math.abs(delta) > 45) show(position + (delta > 0 ? 1 : -1));
-        touchStartY = null;
-    }, { passive: true });
-    document.addEventListener('keydown', (event) => {
-        if (event.target instanceof HTMLElement && ['INPUT', 'SELECT', 'TEXTAREA'].includes(event.target.tagName)) return;
-        if (event.key === 'ArrowRight') show(position + 1);
-        if (event.key === 'ArrowLeft') show(position - 1);
-    });
-    show(0, false);
-}
+
+    // Keep the selected sleeve centered when the mobile layout changes size.
+    new ResizeObserver(() => scrollToRecord(focusedIndex, false)).observe(scroller);
+});
+
+document.querySelectorAll('[data-auto-submit]').forEach((select) => {
+    select.addEventListener('change', () => select.form.requestSubmit());
+});

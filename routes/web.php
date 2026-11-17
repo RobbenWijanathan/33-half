@@ -3,6 +3,7 @@
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CatalogController;
 use App\Http\Controllers\StorefrontController;
+use App\Http\Controllers\TradeInController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [StorefrontController::class, 'home'])->name('home');
@@ -24,3 +25,10 @@ Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
 Route::post('/cart/{product}/add', [CartController::class, 'add'])->name('cart.add');
 Route::patch('/cart/{product}', [CartController::class, 'update'])->name('cart.update');
 Route::delete('/cart/{product}', [CartController::class, 'remove'])->name('cart.remove');
+
+Route::get('/crates/artists/{letter}', [CatalogController::class, 'artistLetter'])->where('letter', '[A-Za-z]')->name('crates.letter');
+Route::get('/crates', [CatalogController::class, 'crates'])->name('crates');
+
+Route::get('/trade-in', [TradeInController::class, 'create'])->name('trade.create');
+Route::post('/trade-in', [TradeInController::class, 'store'])->middleware('throttle:10,1')->name('trade.store');
+Route::get('/your-quotes', [TradeInController::class, 'index'])->name('quotes.index');

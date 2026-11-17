@@ -1,0 +1,18 @@
+<a class="brand" href="{{ route('home') }}" aria-label="33 and a half home">
+    <svg class="brand-logo" viewBox="0 0 184 72" aria-hidden="true" focusable="false">
+        <g fill="currentColor">
+            <path d="M6 3H42L53 13V29L45 36L53 43V59L42 69H6L0 63V55H36L39 52V45L36 42H12V29H36L39 26V20L36 17H0V9Z"/>
+            <path d="M63 3H99L110 13V29L102 36L110 43V59L99 69H63L57 63V55H93L96 52V45L93 42H69V29H93L96 26V20L93 17H57V9Z"/>
+        </g>
+        <circle class="brand-seal" cx="150" cy="36" r="33"/>
+        <g class="brand-seal-ink" fill="none" stroke-width="1">
+            <circle cx="150" cy="36" r="29.5"/>
+            <circle cx="150" cy="36" r="27"/>
+        </g>
+        <g class="brand-seal-type" fill="none" stroke-width="4.5" stroke-linejoin="miter">
+            <path d="M132 27L140 21V38"/>
+            <path d="M158 19L143 53"/>
+            <path d="M154 43V40H165V46L154 51V55H166"/>
+        </g>
+    </svg>
+</a>

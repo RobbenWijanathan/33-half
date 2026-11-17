@@ -19,7 +19,10 @@ class CartController extends Controller
             'total' => $product->price * $quantities[$product->id],
         ]);
 
-        return view('pages.cart', ['items' => $items, 'subtotal' => $items->sum('total')]);
+        return view('pages.cart', [
+            'items' => $items,
+            'subtotal' => $products->first()?->formatMoney($items->sum('total')) ?? '$0.00',
+        ]);
     }
 
     public function add(Request $request, Product $product): RedirectResponse
@@ -30,6 +33,11 @@ class CartController extends Controller
         }
 
         $cart = $request->session()->get('cart', []);
+        $currency = Product::whereIn('id', array_keys($cart))->value('currency');
+        if ($currency && $currency !== $product->currency) {
+            return back()->with('notice', 'Please finish or empty your current cart before adding items priced in a different currency.');
+        }
+
         $cart[$product->id] = min(($cart[$product->id] ?? 0) + $data['quantity'], $product->is_preorder ? 99 : $product->stock);
         $request->session()->put('cart', $cart);
 

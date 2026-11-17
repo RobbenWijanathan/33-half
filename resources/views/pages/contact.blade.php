@@ -1,5 +1,21 @@
 @extends('layouts.app')
 @section('title', 'Contact — 33½')
 @section('content')
-<div class="container page-intro"><span class="eyebrow">Get in touch</span><h1>Let's talk music.</h1><p>Questions about a record, your order, or just what to play next? We would love to hear from you.</p></div><section class="container prose-page contact-grid"><div><h2>Contact details</h2><p>Add your store email, phone number, and location here before launch.</p></div><div><h2>Store hours</h2><p>Hours and in-store information can go here when available.</p><a class="text-link" href="{{ route('about') }}">More about 33½ ↗</a></div></section>
+<div class="container">
+    <div class="breadcrumbs"><a href="{{ route('home') }}">Home</a> / Contact Us</div>
+    <h1>Let’s talk records.</h1>
+    <p class="page-lead">33½ Records · Jakarta, Indonesia</p>
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <h2>Have records to trade?</h2>
+            <p>Start with the artist, album, and condition. You can try the trade-in quote form and view your saved demo request.</p>
+            <a class="button button-dark" href="{{ route('trade.create') }}">Trade In</a>
+        </div>
+        <div class="col-md-6">
+            <h2>Visit the store</h2>
+            <p>Our store address, opening hours, and contact details will be announced here.</p>
+            <a class="text-link" href="{{ route('about') }}">More about 33½</a>
+        </div>
+    </div>
+</div>
 @endsection

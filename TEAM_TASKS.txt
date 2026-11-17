@@ -1,0 +1,9 @@
+33½ work split:
+
+1. Catalog/data — set up MySQL, add real vinyl + merch, build product editing, and handle merch sizes/variants.
+2. Checkout — finish cart, orders, stock updates, pre-orders, shipping, taxes, and payments.
+3. Music discovery — improve search/filters/sorting, fix New Arrivals, add real audio previews, and expand Crate Digging.
+4. Design/content — finish the look, mobile/accessibility, artwork, and About/Contact content.
+5. Platform/growth — deploy the site, add tests, contact form, newsletter, accounts, and wish lists.
+
+First, #1 agrees on product fields with #2 and #3. #4 and #5 can start right away. User selling, music-app sync, and the trap player can come later.

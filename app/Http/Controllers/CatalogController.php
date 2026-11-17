@@ -9,6 +9,7 @@ use App\Models\Product;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class CatalogController extends Controller
 {
@@ -19,7 +20,7 @@ class CatalogController extends Controller
 
     public function vinyl(Request $request): View
     {
-        return $this->listing($request, Product::vinyl(), 'Vinyl records', 'vinyl');
+        return $this->listing($request, Product::vinyl(), 'Shop Vinyl', 'vinyl');
     }
 
     public function merchandise(Request $request): View
@@ -45,7 +46,7 @@ class CatalogController extends Controller
 
         return view('products.show', [
             'product' => $product,
-            'related' => Product::with('artists')->where('product_type', $product->product_type)
+            'related' => Product::with(['artists', 'genres'])->where('product_type', $product->product_type)
                 ->whereKeyNot($product->id)->take(4)->get(),
         ]);
     }
@@ -55,14 +56,11 @@ class CatalogController extends Controller
         return view('pages.artists', ['artists' => Artist::withCount('products')->orderBy('name')->get()]);
     }
 
-    public function artist(Artist $artist): View
+    public function artist(Request $request, Artist $artist): View
     {
-        return view('pages.collection', [
-            'title' => $artist->name,
-            'eyebrow' => 'Artist',
-            'description' => $artist->bio,
-            'products' => $artist->products()->with('artists')->paginate(12),
-        ]);
+        $query = Product::vinyl()->whereHas('artists', fn (Builder $artists) => $artists->whereKey($artist->id));
+
+        return $this->collection($request, $query, $artist->name);
     }
 
     public function genres(): View
@@ -70,26 +68,79 @@ class CatalogController extends Controller
         return view('pages.genres', ['genres' => Genre::withCount('products')->orderBy('name')->get()]);
     }
 
-    public function genre(Genre $genre): View
+    public function genre(Request $request, Genre $genre): View
     {
-        return view('pages.collection', [
-            'title' => $genre->name,
-            'eyebrow' => 'Genre',
-            'description' => 'A small selection from the '.$genre->name.' shelf.',
-            'products' => $genre->products()->with('artists')->paginate(12),
+        $query = Product::vinyl()->whereHas('genres', fn (Builder $genres) => $genres->whereKey($genre->id));
+
+        return $this->collection($request, $query, $genre->name);
+    }
+
+    public function crates(Request $request): View
+    {
+        $filters = $request->validate([
+            'type' => ['nullable', 'in:all,genres,artists'],
+            'sort' => ['nullable', 'in:alphabetical,count'],
+        ]);
+        $sort = $filters['sort'] ?? 'alphabetical';
+        $genres = Genre::with(['products' => fn ($products) => $products->vinyl()->latest('id')])
+            ->withCount(['products' => fn ($products) => $products->vinyl()])
+            ->orderBy('name')->get();
+        $artists = Artist::with(['products' => fn ($products) => $products->vinyl()->latest('id')])
+            ->orderBy('name')->get();
+
+        // A letter crate includes every record by artists whose name starts with it.
+        $letters = $artists->groupBy(fn (Artist $artist) => Str::upper(Str::substr($artist->name, 0, 1)))
+            ->map(fn ($group) => $group->flatMap->products->unique('id')->values())
+            ->filter(fn ($records, $letter) => preg_match('/^[A-Z]$/', $letter) && $records->isNotEmpty());
+
+        if ($sort === 'count') {
+            $genres = $genres->sortByDesc('products_count')->values();
+            $letters = $letters->sortByDesc(fn ($records) => $records->count());
+        }
+
+        return view('pages.crates', [
+            'genres' => $genres,
+            'letters' => $letters,
+            'type' => $filters['type'] ?? 'all',
+            'sort' => $sort,
         ]);
     }
 
-    public function crate(): View
+    public function artistLetter(Request $request, string $letter): View
     {
-        return view('pages.crate', [
-            'products' => Product::vinyl()->with(['artists', 'genres'])->orderBy('id')->get(),
+        $query = Product::vinyl()->whereHas('artists', fn (Builder $artists) => $artists->where('name', 'like', $letter.'%'));
+
+        return $this->collection($request, $query, 'Artists · '.Str::upper($letter));
+    }
+
+    public function crate(Request $request): View
+    {
+        return $this->collection($request, Product::vinyl(), 'All Records');
+    }
+
+    private function collection(Request $request, Builder $query, string $title): View
+    {
+        $filters = $request->validate(['sort' => ['nullable', 'in:artist,title,newest']]);
+        $sort = $filters['sort'] ?? 'artist';
+        $products = $query->with(['artists', 'genres'])->get();
+
+        $products = match ($sort) {
+            'title' => $products->sortBy('name', SORT_NATURAL | SORT_FLAG_CASE),
+            'newest' => $products->sortByDesc('id'),
+            default => $products->sortBy(fn (Product $product) => $product->artists->first()?->name.' '.$product->name, SORT_NATURAL | SORT_FLAG_CASE),
+        };
+
+        return view('pages.collection', [
+            'title' => $title,
+            'products' => $products->values(),
+            'sort' => $sort,
         ]);
     }
 
     private function listing(Request $request, Builder $query, string $title, string $section): View
     {
         $filters = $request->validate([
+            'condition' => ['nullable', 'in:new,used'],
             'q' => ['nullable', 'string', 'max:100'],
             'genre' => ['nullable', 'string', 'max:100'],
             'artist' => ['nullable', 'string', 'max:100'],
@@ -99,6 +150,10 @@ class CatalogController extends Controller
             'availability' => ['nullable', 'in:in-stock,preorder'],
             'sort' => ['nullable', 'in:newest,price-low,price-high,name'],
         ]);
+
+        if ($condition = $filters['condition'] ?? null) {
+            $query->where('condition', $condition);
+        }
 
         if ($term = $filters['q'] ?? null) {
             $query->where(function (Builder $search) use ($term) {
@@ -133,13 +188,13 @@ class CatalogController extends Controller
             'price-low' => $query->orderBy('price'),
             'price-high' => $query->orderByDesc('price'),
             'name' => $query->orderBy('name'),
-            default => $query->latest('created_at'),
+            default => $query->latest('id'),
         };
 
         return view('pages.catalog', [
             'title' => $title,
             'section' => $section,
-            'products' => $query->with('artists')->paginate(12)->withQueryString(),
+            'products' => $query->with(['artists', 'genres'])->paginate(12)->withQueryString(),
             'genres' => Genre::orderBy('name')->get(),
             'artists' => Artist::orderBy('name')->get(),
             'labels' => Label::orderBy('name')->get(),
