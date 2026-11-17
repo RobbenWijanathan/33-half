@@ -2,6 +2,34 @@
 
 A small Laravel storefront scaffold for vinyl records and music related merchandise. It is intentionally a foundation: the catalog, layout, components, and interactions are ready to edit, while checkout and other launch features remain placeholders.
 
+## Screenshots
+
+Select a screenshot to open it at full size.
+
+| Storefront and new arrivals | About Us |
+| --- | --- |
+| [![Homepage with the storefront banner and new arrivals](docs/screenshots/01-home.jpg)](docs/screenshots/01-home.jpg) | [![Photo-led About Us page](docs/screenshots/10-about.jpg)](docs/screenshots/10-about.jpg) |
+
+| Filtered vinyl catalog | Genre and artist crates |
+| --- | --- |
+| [![Jazz records filtered by genre and sorted by price](docs/screenshots/02-vinyl-catalog.jpg)](docs/screenshots/02-vinyl-catalog.jpg) | [![Crate directory arranged by genre and artist](docs/screenshots/03-crates.jpg)](docs/screenshots/03-crates.jpg) |
+
+| Crate Digging in dark mode | Record detail and sleeve gallery |
+| --- | --- |
+| [![Horizontal carousel in dark mode with the selected album's details](docs/screenshots/04-crate-digging-dark.jpg)](docs/screenshots/04-crate-digging-dark.jpg) | [![OK Computer record detail with sleeve thumbnails and add-to-cart controls](docs/screenshots/05-record-detail.jpg)](docs/screenshots/05-record-detail.jpg) |
+
+| Merchandise | Cart in USD |
+| --- | --- |
+| [![Branded 33½ merchandise with name and price sorting](docs/screenshots/09-merchandise.jpg)](docs/screenshots/09-merchandise.jpg) | [![Cart with two records, a quantity control, and totals in USD](docs/screenshots/06-cart-usd.jpg)](docs/screenshots/06-cart-usd.jpg) |
+
+| Trade-in form | Demo quote history |
+| --- | --- |
+| [![Trade-in quote form with record and sleeve condition fields](docs/screenshots/07-trade-in.jpg)](docs/screenshots/07-trade-in.jpg) | [![A demo quote request with Pending Review status](docs/screenshots/08-quote-history.jpg)](docs/screenshots/08-quote-history.jpg) |
+
+### Mobile storefront
+
+<a href="docs/screenshots/11-mobile-home.jpg"><img src="docs/screenshots/11-mobile-home.jpg" alt="Mobile storefront with a compact menu, search, and hero banner" width="280"></a>
+
 ## Stack
 
 - Laravel 12 / PHP 8.2+

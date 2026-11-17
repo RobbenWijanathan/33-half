@@ -6,9 +6,10 @@
 /storage/*.key
 /storage/pail
 /vendor
-.env
-.env.backup
-.env.production
+# Local environment files. Keep the setup template for collaborators.
+/.env
+/.env.*
+!/.env.example
 .phpactor.json
 .phpunit.result.cache
 Homestead.json
@@ -21,3 +22,12 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
+
+# Local assistant and presentation work, separate from the Laravel site.
+/.codex/
+/33half-*-work/
+/presentation-work/
+
+# Generated files from local helper scripts.
+__pycache__/
+*.pyc
