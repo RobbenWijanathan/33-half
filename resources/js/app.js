@@ -1,6 +1,7 @@
 import './audio-preview';
 import './crate-digging';
 import './cart';
+import './record-gallery';
 
 const menuButton = document.querySelector('.menu-toggle');
 const navigation = document.querySelector('#main-navigation');
@@ -20,3 +21,11 @@ if (menuButton && navigation) {
         }
     });
 }
+
+document.querySelectorAll('[data-art-fallback]').forEach((image) => {
+    const useFallback = () => {
+        image.src = image.dataset.artFallback;
+    };
+    image.addEventListener('error', useFallback, { once: true });
+    if (image.complete && !image.naturalWidth) useFallback();
+});

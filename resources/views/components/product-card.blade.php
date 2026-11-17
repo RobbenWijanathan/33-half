@@ -5,7 +5,7 @@
 <article class="product-card" data-preview-card data-audio-url="{{ $product->audio_preview_url ? asset($product->audio_preview_url) : '' }}" data-start-time="{{ $product->preview_start_time }}">
     <div class="product-media">
         <a href="{{ $url }}">
-            <img src="{{ asset($product->cover_image ?: 'images/demo/placeholder.svg') }}" alt="{{ $product->name }} artwork" loading="lazy">
+            <x-product-art :product="$product" />
         </a>
         @if($product->product_type === 'vinyl')
             <span @class(['product-badge', 'used' => $product->condition === 'used'])>
@@ -20,6 +20,6 @@
     </div>
     <div class="product-bottom">
         <strong>{{ $product->formatted_price }}</strong>
-        <small>{{ $product->product_type === 'vinyl' ? $product->genres->pluck('name')->join(' · ') : '33½ Merchandise' }}</small>
+        <small>{{ $product->product_type === 'vinyl' ? $product->card_genre_line : '33½ Merchandise' }}</small>
     </div>
 </article>

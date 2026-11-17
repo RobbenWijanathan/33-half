@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', $title.' — 33½')
+@section('title', $title)
 @section('content')
 <div class="container collection-page">
     <div class="breadcrumbs">

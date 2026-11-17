@@ -2,14 +2,14 @@
 @section('content')
     <x-hero />
     <section class="section container">
-        <x-section-header title="New Arrivals" :href="route('new-arrivals')" />
+        <x-section-header title="New Arrivals" :href="route('vinyl')" />
         <x-product-grid :products="$newArrivals" />
     </section>
     <section class="section container pt-0">
         <x-section-header title="Merchandise" :href="route('merch')" />
         <x-product-grid :products="$merchandise" :wide="true" />
     </section>
-    <section class="about-banner">
+    <section class="about-banner about-banner--home">
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-md-6">

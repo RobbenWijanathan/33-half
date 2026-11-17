@@ -42,6 +42,7 @@ class TradeInController extends Controller
             ->map(fn ($photo) => Str::limit($photo->getClientOriginalName(), 200))
             ->all();
         $data['id'] = 'Q-'.Str::upper(Str::random(8));
+        $data['status'] = 'pending_review';
         $data['submitted_at'] = now()->format('d M Y, H:i');
 
         $quotes = $request->session()->get('quotes', []);

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CatalogController;
+use App\Http\Controllers\CurrencyController;
 use App\Http\Controllers\StorefrontController;
 use App\Http\Controllers\TradeInController;
 use Illuminate\Support\Facades\Route;
@@ -16,15 +17,16 @@ Route::get('/artists', [CatalogController::class, 'artists'])->name('artists.ind
 Route::get('/artists/{artist:slug}', [CatalogController::class, 'artist'])->name('artists.show');
 Route::get('/genres', [CatalogController::class, 'genres'])->name('genres.index');
 Route::get('/genres/{genre:slug}', [CatalogController::class, 'genre'])->name('genres.show');
-Route::get('/new-arrivals', [CatalogController::class, 'newArrivals'])->name('new-arrivals');
+Route::redirect('/new-arrivals', '/vinyl', 301);
 Route::get('/pre-orders', [CatalogController::class, 'preorders'])->name('preorders');
 Route::get('/crate-digging', [CatalogController::class, 'crate'])->name('crate');
 Route::get('/about', [StorefrontController::class, 'about'])->name('about');
 Route::get('/contact', [StorefrontController::class, 'contact'])->name('contact');
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
-Route::post('/cart/{product}/add', [CartController::class, 'add'])->name('cart.add');
-Route::patch('/cart/{product}', [CartController::class, 'update'])->name('cart.update');
-Route::delete('/cart/{product}', [CartController::class, 'remove'])->name('cart.remove');
+Route::post('/cart/{product}/add', [CartController::class, 'add'])->block()->name('cart.add');
+Route::patch('/cart/{product}', [CartController::class, 'update'])->block()->name('cart.update');
+Route::delete('/cart/{product}', [CartController::class, 'remove'])->block()->name('cart.remove');
+Route::post('/currency', CurrencyController::class)->block()->name('currency.update');
 
 Route::get('/crates/artists/{letter}', [CatalogController::class, 'artistLetter'])->where('letter', '[A-Za-z]')->name('crates.letter');
 Route::get('/crates', [CatalogController::class, 'crates'])->name('crates');

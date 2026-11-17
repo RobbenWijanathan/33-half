@@ -12,8 +12,11 @@ document.querySelectorAll('[data-record-carousel]').forEach((carousel) => {
     const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
     let focusedIndex = 0;
     let scrollFrame = null;
+    let wheelAmount = 0;
+    let lastWheelEvent = 0;
+    let lastWheelStep = -Infinity;
 
-    // The nearest cover to the center is the single source of truth for captions.
+    // The nearest cover to the left edge is the single source of truth for captions.
     function focusRecord(index) {
         if (index === focusedIndex) return;
         preview.stop();
@@ -34,14 +37,12 @@ document.querySelectorAll('[data-record-carousel]').forEach((carousel) => {
     }
 
     function updateFromScroll() {
-        const bounds = scroller.getBoundingClientRect();
-        const center = bounds.top + scroller.clientHeight / 2;
+        const left = scroller.scrollLeft;
         let closest = 0;
         let smallestDistance = Infinity;
 
         records.forEach((record, index) => {
-            const cover = record.getBoundingClientRect();
-            const distance = Math.abs(cover.top + cover.height / 2 - center);
+            const distance = Math.abs(record.offsetLeft - left);
             if (distance < smallestDistance) {
                 closest = index;
                 smallestDistance = distance;
@@ -54,11 +55,8 @@ document.querySelectorAll('[data-record-carousel]').forEach((carousel) => {
 
     function scrollToRecord(index, animate = true) {
         const record = records[Math.max(0, Math.min(index, records.length - 1))];
-        const bounds = scroller.getBoundingClientRect();
-        const cover = record.getBoundingClientRect();
-
         scroller.scrollTo({
-            top: scroller.scrollTop + cover.top + cover.height / 2 - bounds.top - scroller.clientHeight / 2,
+            left: record.offsetLeft,
             behavior: animate && !reducedMotion.matches ? 'smooth' : 'instant',
         });
     }
@@ -66,6 +64,27 @@ document.querySelectorAll('[data-record-carousel]').forEach((carousel) => {
     scroller.addEventListener('scroll', () => {
         if (scrollFrame === null) scrollFrame = requestAnimationFrame(updateFromScroll);
     }, { passive: true });
+
+    scroller.addEventListener('wheel', (event) => {
+        if (!event.cancelable || event.ctrlKey || event.shiftKey || Math.abs(event.deltaX) >= Math.abs(event.deltaY)) return;
+
+        const direction = Math.sign(event.deltaY);
+        const target = focusedIndex + direction;
+        if (target < 0 || target >= records.length) return;
+
+        // At either end the same gesture can continue scrolling the page.
+        event.preventDefault();
+        const now = performance.now();
+        const factor = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? scroller.clientHeight : 1;
+        if (now - lastWheelEvent > 160 || Math.sign(wheelAmount) !== direction) wheelAmount = 0;
+        lastWheelEvent = now;
+        wheelAmount += event.deltaY * factor;
+
+        if (Math.abs(wheelAmount) < 32 || now - lastWheelStep < 230) return;
+        scrollToRecord(target);
+        wheelAmount = 0;
+        lastWheelStep = now;
+    }, { passive: false });
 
     records.forEach((record, index) => {
         record.addEventListener('click', () => scrollToRecord(index));
@@ -75,8 +94,8 @@ document.querySelectorAll('[data-record-carousel]').forEach((carousel) => {
 
     scroller.addEventListener('keydown', (event) => {
         const destinations = {
-            ArrowUp: focusedIndex - 1,
-            ArrowDown: focusedIndex + 1,
+            ArrowLeft: focusedIndex - 1,
+            ArrowRight: focusedIndex + 1,
             Home: 0,
             End: records.length - 1,
         };
@@ -86,7 +105,7 @@ document.querySelectorAll('[data-record-carousel]').forEach((carousel) => {
         }
     });
 
-    // Keep the selected sleeve centered when the mobile layout changes size.
+    // Keep the selected sleeve on the left when the mobile layout changes size.
     new ResizeObserver(() => scrollToRecord(focusedIndex, false)).observe(scroller);
 });
 

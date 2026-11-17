@@ -4,8 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Artist;
 use App\Models\Genre;
-use App\Models\Label;
 use App\Models\Product;
+use App\Support\GenreTaxonomy;
+use App\Support\Money;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -26,11 +27,6 @@ class CatalogController extends Controller
     public function merchandise(Request $request): View
     {
         return $this->listing($request, Product::merchandise(), 'Merchandise', 'merch');
-    }
-
-    public function newArrivals(Request $request): View
-    {
-        return $this->listing($request, Product::query()->where('is_preorder', false), 'New arrivals', 'new-arrivals');
     }
 
     public function preorders(Request $request): View
@@ -65,11 +61,13 @@ class CatalogController extends Controller
 
     public function genres(): View
     {
-        return view('pages.genres', ['genres' => Genre::withCount('products')->orderBy('name')->get()]);
+        return view('pages.genres', ['genres' => Genre::withCount('products')->has('products')->orderBy('name')->get()]);
     }
 
-    public function genre(Request $request, Genre $genre): View
+    public function genre(Request $request, string $genre): View
     {
+        $slug = Str::slug(GenreTaxonomy::parent($genre));
+        $genre = Genre::where('slug', $slug)->firstOrFail();
         $query = Product::vinyl()->whereHas('genres', fn (Builder $genres) => $genres->whereKey($genre->id));
 
         return $this->collection($request, $query, $genre->name);
@@ -84,6 +82,7 @@ class CatalogController extends Controller
         $sort = $filters['sort'] ?? 'alphabetical';
         $genres = Genre::with(['products' => fn ($products) => $products->vinyl()->latest('id')])
             ->withCount(['products' => fn ($products) => $products->vinyl()])
+            ->whereHas('products', fn ($products) => $products->vinyl())
             ->orderBy('name')->get();
         $artists = Artist::with(['products' => fn ($products) => $products->vinyl()->latest('id')])
             ->orderBy('name')->get();
@@ -115,13 +114,13 @@ class CatalogController extends Controller
 
     public function crate(Request $request): View
     {
-        return $this->collection($request, Product::vinyl(), 'All Records');
+        return $this->collection($request, Product::vinyl(), 'Crate-Digging', 'newest');
     }
 
-    private function collection(Request $request, Builder $query, string $title): View
+    private function collection(Request $request, Builder $query, string $title, string $defaultSort = 'artist'): View
     {
         $filters = $request->validate(['sort' => ['nullable', 'in:artist,title,newest']]);
-        $sort = $filters['sort'] ?? 'artist';
+        $sort = $filters['sort'] ?? $defaultSort;
         $products = $query->with(['artists', 'genres'])->get();
 
         $products = match ($sort) {
@@ -139,17 +138,28 @@ class CatalogController extends Controller
 
     private function listing(Request $request, Builder $query, string $title, string $section): View
     {
-        $filters = $request->validate([
-            'condition' => ['nullable', 'in:new,used'],
-            'q' => ['nullable', 'string', 'max:100'],
-            'genre' => ['nullable', 'string', 'max:100'],
-            'artist' => ['nullable', 'string', 'max:100'],
-            'label' => ['nullable', 'string', 'max:100'],
-            'min_price' => ['nullable', 'numeric', 'min:0'],
-            'max_price' => ['nullable', 'numeric', 'min:0'],
-            'availability' => ['nullable', 'in:in-stock,preorder'],
-            'sort' => ['nullable', 'in:newest,price-low,price-high,name'],
-        ]);
+        $merchandise = $section === 'merch';
+        $sortOptions = ['name' => 'Name A–Z', 'price-low' => 'Price Low to High', 'price-high' => 'Price High to Low'];
+        if (! $merchandise) {
+            $sortOptions = ['newest' => 'Recently Added'] + $sortOptions;
+        }
+
+        $rules = [
+            'sort' => ['nullable', 'in:'.implode(',', array_keys($sortOptions))],
+        ];
+        if (! $merchandise) {
+            $rules += [
+                'condition' => ['nullable', 'in:new,used'],
+                'q' => ['nullable', 'string', 'max:100'],
+                'genre' => ['nullable', 'string', 'max:100'],
+                'artist' => ['nullable', 'string', 'max:100'],
+                'label' => ['nullable', 'string', 'max:100'],
+                'min_price' => ['nullable', 'numeric', 'min:0'],
+                'max_price' => ['nullable', 'numeric', 'min:0'],
+                'availability' => ['nullable', 'in:in-stock,preorder'],
+            ];
+        }
+        $filters = $request->validate($rules);
 
         if ($condition = $filters['condition'] ?? null) {
             $query->where('condition', $condition);
@@ -164,6 +174,10 @@ class CatalogController extends Controller
 
         foreach (['genre' => 'genres', 'artist' => 'artists'] as $field => $relation) {
             if ($slug = $filters[$field] ?? null) {
+                if ($field === 'genre') {
+                    $slug = Str::slug(GenreTaxonomy::parent($slug));
+                    $filters['genre'] = $slug;
+                }
                 $query->whereHas($relation, fn (Builder $related) => $related->where('slug', $slug));
             }
         }
@@ -172,10 +186,10 @@ class CatalogController extends Controller
             $query->whereHas('label', fn (Builder $label) => $label->where('slug', $slug));
         }
         if (isset($filters['min_price'])) {
-            $query->where('price', '>=', $filters['min_price']);
+            $query->where('price', '>=', Money::fromDisplay((float) $filters['min_price']));
         }
         if (isset($filters['max_price'])) {
-            $query->where('price', '<=', $filters['max_price']);
+            $query->where('price', '<=', Money::fromDisplay((float) $filters['max_price']));
         }
         if (($filters['availability'] ?? null) === 'in-stock') {
             $query->where('stock', '>', 0)->where('is_preorder', false);
@@ -184,7 +198,7 @@ class CatalogController extends Controller
             $query->where('is_preorder', true);
         }
 
-        match ($filters['sort'] ?? 'newest') {
+        match ($filters['sort'] ?? array_key_first($sortOptions)) {
             'price-low' => $query->orderBy('price'),
             'price-high' => $query->orderByDesc('price'),
             'name' => $query->orderBy('name'),
@@ -194,10 +208,9 @@ class CatalogController extends Controller
         return view('pages.catalog', [
             'title' => $title,
             'section' => $section,
-            'products' => $query->with(['artists', 'genres'])->paginate(12)->withQueryString(),
-            'genres' => Genre::orderBy('name')->get(),
-            'artists' => Artist::orderBy('name')->get(),
-            'labels' => Label::orderBy('name')->get(),
+            'products' => $query->with(['artists', 'genres'])->paginate($section === 'vinyl' ? 48 : 12)->withQueryString(),
+            'genres' => $merchandise ? collect() : Genre::has('products')->orderBy('name')->get(),
+            'sortOptions' => $sortOptions,
             'filters' => $filters,
         ]);
     }

@@ -1,0 +1,8 @@
+# Replace the two paths with the absolute path to this project's public folder.
+# Include the configured file from XAMPP's apache/conf/extra/httpd-vhosts.conf.
+Alias /33-half "C:/path/to/33-half/public"
+<Directory "C:/path/to/33-half/public">
+    Options FollowSymLinks
+    AllowOverride All
+    Require local
+</Directory>

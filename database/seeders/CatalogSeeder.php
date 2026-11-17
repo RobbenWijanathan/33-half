@@ -4,67 +4,91 @@ namespace Database\Seeders;
 
 use App\Models\Artist;
 use App\Models\Genre;
-use App\Models\Label;
 use App\Models\Product;
+use App\Support\GenreTaxonomy;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class CatalogSeeder extends Seeder
 {
     public function run(): void
     {
-        $genres = collect(['Ambient', 'Electronic', 'Jazz', 'Indie', 'Soul', 'Experimental'])
-            ->mapWithKeys(fn ($name) => [$name => Genre::firstOrCreate(['slug' => Str::slug($name)], ['name' => $name])]);
-        $labels = collect(['Half Light', 'Loose Ends', 'After Hours'])
-            ->mapWithKeys(fn ($name) => [$name => Label::firstOrCreate(['slug' => Str::slug($name)], ['name' => $name])]);
-        $artists = collect(['Mira Sol', 'The Night Index', 'Nala June', 'Soft Geometry', 'Low Tide Assembly', 'Arlo Vale'])
-            ->mapWithKeys(fn ($name) => [$name => Artist::firstOrCreate(['slug' => Str::slug($name)], [
-                'name' => $name,
-                'bio' => 'An independent artist exploring sounds between familiar genres.',
-            ])]);
+        $albums = json_decode(
+            file_get_contents(database_path('data/albums.json')),
+            true,
+            flags: JSON_THROW_ON_ERROR,
+        );
 
-        $records = [
-            ['Afterimage', 'Mira Sol', 'Electronic', 'Half Light', 28, '2026-09-18', 1, true, false],
-            ['Nothing Stays Still', 'The Night Index', 'Indie', 'Loose Ends', 32, '2026-08-21', 2, true, false],
-            ['Blue Hour Notes', 'Nala June', 'Jazz', 'After Hours', 30, '2026-07-10', 3, true, false],
-            ['Forms in Motion', 'Soft Geometry', 'Experimental', 'Half Light', 35, '2026-06-05', 4, false, false],
-            ['Shoreline Radio', 'Low Tide Assembly', 'Ambient', 'Loose Ends', 29, '2026-10-20', 5, false, true],
-            ['The Last Light', 'Arlo Vale', 'Soul', 'After Hours', 34, '2026-11-12', 6, false, true],
-            ['Small Hours', 'Mira Sol', 'Ambient', 'Half Light', 27, '2026-04-17', 7, false, false],
-            ['No Fixed Address', 'The Night Index', 'Indie', 'Loose Ends', 31, '2026-03-06', 8, false, false],
-        ];
+        DB::transaction(function () use ($albums) {
+            // Insert in reverse chart order so the first selections appear first in New Arrivals.
+            foreach (array_reverse($albums, true) as $rank => $album) {
+                $this->seedAlbum($album, $rank);
+            }
 
-        foreach ($records as [$name, $artist, $genre, $label, $price, $release, $cover, $featured, $preorder]) {
-            $product = Product::updateOrCreate(['slug' => Str::slug($name)], [
-                'name' => $name,
-                'description' => 'A demo release for the 33½ storefront. Replace this description, artwork, and audio with your own catalog content.',
-                'product_type' => 'vinyl',
-                'price' => $price,
-                'stock' => $preorder ? 0 : 12,
-                'cover_image' => 'images/demo/cover-'.$cover.'.svg',
-                'audio_preview_url' => 'audio/demo-preview.wav',
-                'preview_start_time' => 0,
-                'release_date' => $release,
-                'format' => '12" LP',
-                'label_id' => $labels[$label]->id,
-                'is_featured' => $featured,
-                'is_preorder' => $preorder,
-            ]);
-            $product->artists()->sync([$artists[$artist]->id]);
-            $product->genres()->sync([$genres[$genre]->id]);
+            $this->seedMerchandise();
+        });
+    }
+
+    private function seedAlbum(array $album, int $rank): void
+    {
+        $artist = Artist::firstOrCreate(
+            ['slug' => Str::slug($album['artist'])],
+            ['name' => $album['artist']],
+        );
+
+        $preorder = in_array($album['slug'], ['animals', 'red'], true);
+        $used = ! $preorder && $rank % 3 === 2;
+
+        $product = Product::firstOrCreate(['slug' => $album['slug']], [
+            'name' => $album['title'],
+            'description' => $album['description'],
+            'gallery_images' => $album['gallery'] ?? null,
+            'product_type' => 'vinyl',
+            'price' => $album['price'],
+            'currency' => 'IDR',
+            'stock' => $preorder ? 0 : ($used ? 2 : 8),
+            'condition' => $used ? 'used' : 'new',
+            'record_grade' => $used ? 'VG+' : null,
+            'sleeve_grade' => $used ? 'VG' : null,
+            'cover_image' => $album['artwork'],
+            'audio_preview_url' => $album['preview'] ?? null,
+            'release_date' => $album['released'],
+            'format' => 'Vinyl LP',
+            'is_featured' => $rank < 4,
+            'is_preorder' => $preorder,
+        ]);
+
+        if (! $product->gallery_images && ! empty($album['gallery'])) {
+            $product->update(['gallery_images' => $album['gallery']]);
         }
 
+        $product->artists()->syncWithoutDetaching([$artist->id]);
+        $genreIds = collect(GenreTaxonomy::normalize($album['genres']))->map(fn (string $genre) => Genre::firstOrCreate(
+            ['slug' => Str::slug($genre)],
+            ['name' => $genre],
+        )->id);
+        $product->syncGenres($genreIds->all());
+    }
+
+    private function seedMerchandise(): void
+    {
         foreach ([
-            ['33½ Studio Tee', 'T-shirts', 26, 9],
-            ['Listening Room Tote', 'Tote bags', 18, 10],
-            ['Side B Poster', 'Posters', 16, 11],
+            ['33½ Studio Tee', 'T-shirts', 416000, 9],
+            ['Listening Room Tote', 'Tote bags', 288000, 10],
+            ['Side B Poster', 'Posters', 256000, 11],
         ] as [$name, $category, $price, $cover]) {
             Product::updateOrCreate(['slug' => Str::slug($name)], [
                 'name' => $name,
-                'description' => 'Demo merchandise for the 33½ storefront. Sizes and variants can be added later.',
+                'description' => match ($category) {
+                    'T-shirts' => 'A charcoal shop tee with the 33½ Records mark across the chest.',
+                    'Tote bags' => 'A roomy record tote with the 33½ Records mark printed on the front.',
+                    default => 'A record-room print with warm paper tones and the 33½ Records mark.',
+                },
                 'product_type' => 'merchandise',
                 'merch_category' => $category,
                 'price' => $price,
+                'currency' => 'IDR',
                 'stock' => 15,
                 'cover_image' => 'images/demo/cover-'.$cover.'.svg',
                 'is_featured' => $cover === 9,

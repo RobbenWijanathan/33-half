@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'Your Quotes — 33½')
+@section('title', 'Your Quotes')
 @section('content')
 <div class="container">
     <div class="breadcrumbs"><a href="{{ route('home') }}">Home</a> / Your Quotes</div>
@@ -12,7 +12,7 @@
         <article class="quote-card">
             <div class="d-flex justify-content-between flex-wrap">
                 <span class="eyebrow">{{ $quote['id'] }}</span>
-                <span class="status-badge">Demo · pending review</span>
+                <x-status-badge :status="$quote['status'] ?? 'pending_review'" />
             </div>
             <h2>{{ $quote['album'] }}</h2>
             <p>{{ $quote['artist'] }}</p>

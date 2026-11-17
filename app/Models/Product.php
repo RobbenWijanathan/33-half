@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\Money;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,13 +12,14 @@ class Product extends Model
 {
     protected $fillable = [
         'name', 'slug', 'description', 'product_type', 'merch_category', 'price',
-        'condition', 'record_grade', 'sleeve_grade', 'currency', 'stock', 'cover_image', 'audio_preview_url', 'preview_start_time',
+        'condition', 'record_grade', 'sleeve_grade', 'gallery_images', 'currency', 'stock', 'cover_image', 'audio_preview_url', 'preview_start_time',
         'release_date', 'format', 'label_id', 'is_featured', 'is_preorder',
     ];
 
     protected function casts(): array
     {
         return [
+            'gallery_images' => 'array',
             'price' => 'decimal:2',
             'release_date' => 'date',
             'is_featured' => 'boolean',
@@ -27,16 +29,52 @@ class Product extends Model
 
     public function getFormattedPriceAttribute(): string
     {
-        return $this->formatMoney((float) $this->price);
+        return Money::format((float) $this->price);
     }
 
-    public function formatMoney(float $amount): string
+    public function getCoverUrlAttribute(): string
     {
-        if ($this->currency === 'IDR') {
-            return 'Rp '.number_format($amount, 0, ',', '.');
+        $cachedCover = 'images/albums/'.$this->slug.'.webp';
+        if (is_file(public_path($cachedCover))) {
+            return asset($cachedCover);
         }
 
-        return '$'.number_format($amount, 2);
+        return asset($this->cover_image ?: 'images/demo/placeholder.svg');
+    }
+
+    public function getGenreLineAttribute(): string
+    {
+        return $this->genres->take(3)->pluck('name')->join(' • ');
+    }
+
+    public function getCardGenreLineAttribute(): string
+    {
+        return $this->genres->take(2)->pluck('name')->join(' • ');
+    }
+
+    public function getGalleryViewsAttribute(): array
+    {
+        $front = ['url' => $this->cover_url, 'label' => 'Front cover'];
+        $extra = array_slice($this->gallery_images ?? [], 0, 2);
+
+        if ($extra === []) {
+            return [$front, ['url' => $front['url'], 'label' => 'Cover reference']];
+        }
+
+        return [$front, ...array_map(fn (array $image) => [
+            'url' => asset($image['path']),
+            'label' => $image['label'],
+        ], $extra)];
+    }
+
+    public function syncGenres(array $genreIds): void
+    {
+        $genreIds = array_values(array_unique($genreIds));
+        if (count($genreIds) > 3) {
+            throw new \InvalidArgumentException('A record can have at most three genres.');
+        }
+
+        $this->genres()->sync($genreIds);
     }
 
     public function artists(): BelongsToMany

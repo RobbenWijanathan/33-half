@@ -7,11 +7,22 @@
                 <input id="site-search" name="q" type="search" value="{{ request('q') }}" placeholder="Search records, artists, albums…">
                 <button type="submit" aria-label="Search">Search</button>
             </form>
-            <a class="cart-link" href="{{ route('cart.index') }}">Cart <span>{{ array_sum(session('cart', [])) }}</span></a>
+            <form class="currency-form" method="POST" action="{{ route('currency.update') }}">
+                @csrf
+                <label for="display-currency" class="sr-only">Display currency</label>
+                <select id="display-currency" name="currency" data-auto-submit>
+                    @foreach(['IDR' => 'IDR · Rp', 'USD' => 'USD · $'] as $value => $label)
+                        <option value="{{ $value }}" @selected(session('currency', 'IDR') === $value)>{{ $label }}</option>
+                    @endforeach
+                </select>
+                <button class="sort-submit button button-border" type="submit">Apply</button>
+            </form>
+            <a class="cart-link" href="{{ route('cart.index') }}">Cart <span data-cart-count>{{ array_sum(session('cart', [])) }}</span></a>
+            <x-theme-toggle />
             <button class="menu-toggle" type="button" aria-controls="main-navigation" aria-expanded="false">Menu</button>
         </div>
         <nav id="main-navigation" class="main-nav" aria-label="Main navigation">
-            @foreach(['home' => 'Home', 'vinyl' => 'Shop Vinyl', 'crates' => 'Crate-Digging', 'trade.create' => 'Trade In', 'merch' => 'Merchandise', 'quotes.index' => 'Your Quotes'] as $name => $label)
+            @foreach(['home' => 'Home', 'vinyl' => 'Shop Vinyl', 'crates' => 'Crates', 'trade.create' => 'Trade In', 'merch' => 'Merchandise', 'quotes.index' => 'Your Quotes'] as $name => $label)
                 <a href="{{ route($name) }}" @if(request()->routeIs($name) || ($name === 'crates' && request()->routeIs('crate', 'crates.*', 'genres.show', 'artists.show'))) aria-current="page" @endif>{{ $label }}</a>
             @endforeach
         </nav>

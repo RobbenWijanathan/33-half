@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'Artists — 33½')
+@section('title', 'Artists')
 @section('content')
 <div class="container">
     <div class="breadcrumbs"><a href="{{ route('home') }}">Home</a> / Artists</div>

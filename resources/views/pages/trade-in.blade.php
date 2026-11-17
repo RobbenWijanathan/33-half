@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'Trade In — 33½')
+@section('title', 'Trade In')
 @section('content')
 <div class="container">
     <div class="breadcrumbs"><a href="{{ route('home') }}">Home</a> / Trade In</div>

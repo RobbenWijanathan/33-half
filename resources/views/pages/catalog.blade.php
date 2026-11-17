@@ -1,10 +1,11 @@
 @extends('layouts.app')
-@section('title', $title.' — 33½')
+@section('title', $title)
 @section('content')
 <div class="container">
     <div class="breadcrumbs"><a href="{{ route('home') }}">Home</a> / {{ $title }}</div>
     <h1>{{ $title }}</h1>
     <form method="GET" class="catalog-toolbar">
+        @if($section !== 'merch')
         <fieldset class="condition-filter">
             <legend class="sr-only">Record condition</legend>
             @foreach(['' => 'All', 'new' => 'New', 'used' => 'Used'] as $value => $label)
@@ -22,10 +23,11 @@
                 @endforeach
             </select>
         </label>
+        @endif
         <label>Sort
             <select name="sort" class="form-control">
-                @foreach(['newest' => 'Recently Added', 'name' => 'Title A–Z', 'price-low' => 'Price Low to High', 'price-high' => 'Price High to Low'] as $value => $label)
-                    <option value="{{ $value }}" @selected(($filters['sort'] ?? 'newest') === $value)>{{ $label }}</option>
+                @foreach($sortOptions as $value => $label)
+                    <option value="{{ $value }}" @selected(($filters['sort'] ?? array_key_first($sortOptions)) === $value)>{{ $label }}</option>
                 @endforeach
             </select>
         </label>

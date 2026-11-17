@@ -4,7 +4,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#350021">
-    <title>@yield('title', '33½ Records — Buy, sell, and trade vinyl')</title>
+    <meta name="color-scheme" content="light dark">
+    <x-theme-script />
+    <title>33½ Records - @yield('title', 'Home')</title>
+    <link rel="icon" type="image/svg+xml" href="{{ asset('images/brand/favicon.svg') }}">
     <meta name="description" content="New releases, graded used vinyl, and the joy of finding your next record.">
     <link rel="stylesheet" href="{{ asset('assets/bootstrap/css/bootstrap.min.css') }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])

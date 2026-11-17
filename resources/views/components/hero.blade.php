@@ -3,7 +3,7 @@
         <h1>Second Hand Records<br>You Can Trust</h1>
         <p>Find your next record.</p>
         <div class="d-flex justify-content-center flex-wrap">
-            <a class="button button-white" href="{{ route('crates') }}">Crate-Digging</a>
+            <a class="button button-white" href="{{ route('crate') }}">Crate-Digging</a>
             <a class="button button-outline" href="{{ route('trade.create') }}">Trade In</a>
         </div>
     </div>

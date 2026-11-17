@@ -1,7 +1,20 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" role="img" aria-label="LISTENING ROOM TOTE demo artwork">
 <rect width="600" height="600" fill="#d4d8c0"/>
-<rect x="165" y="205" width="270" height="265" rx="12" fill="#293529"/><path d="M225 220V160 Q225 95 300 95 Q375 95 375 160V220" fill="none" stroke="#293529" stroke-width="24"/><text x="300" y="355" fill="#d4d8c0" font-size="62" font-weight="bold" text-anchor="middle">33½</text>
-<rect y="510" width="600" height="90" fill="#293529"/>
-<text x="34" y="548" fill="#d4d8c0" font-family="Arial,sans-serif" font-size="22" font-weight="bold" letter-spacing="2">LISTENING ROOM TOTE</text>
-<text x="34" y="577" fill="#d4d8c0" font-family="Arial,sans-serif" font-size="13" letter-spacing="2">MERCHANDISE · 33½</text>
+<rect x="165" y="205" width="270" height="265" rx="12" fill="#293529"/><path d="M225 220V160 Q225 95 300 95 Q375 95 375 160V220" fill="none" stroke="#293529" stroke-width="24"/>
+<g transform="translate(222 300) scale(.85)">
+<g fill="#fff">
+            <path d="M6 3H42L53 13V29L45 36L53 43V59L42 69H6L0 63V55H36L39 52V45L36 42H12V29H36L39 26V20L36 17H0V9Z"/>
+            <path d="M63 3H99L110 13V29L102 36L110 43V59L99 69H63L57 63V55H93L96 52V45L93 42H69V29H93L96 26V20L93 17H57V9Z"/>
+        </g>
+        <circle fill="#fff" cx="150" cy="36" r="33"/>
+        <g stroke="#350021" fill="none" stroke-width="1">
+            <circle cx="150" cy="36" r="29.5"/>
+            <circle cx="150" cy="36" r="27"/>
+        </g>
+        <g stroke="#350021" fill="none" stroke-width="4.5" stroke-linejoin="miter">
+            <path d="M132 27L140 21V38"/>
+            <path d="M158 19L143 53"/>
+            <path d="M154 43V40H165V46L154 51V55H166"/>
+        </g>
+    </g>
 </svg>

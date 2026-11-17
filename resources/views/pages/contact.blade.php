@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'Contact — 33½')
+@section('title', 'Contact')
 @section('content')
 <div class="container">
     <div class="breadcrumbs"><a href="{{ route('home') }}">Home</a> / Contact Us</div>

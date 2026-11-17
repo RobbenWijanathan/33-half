@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', $product->name.' — 33½')
+@section('title', $product->name)
 @section('content')
 <div class="container breadcrumbs">
     <a href="{{ route('shop') }}">Shop</a><span>/</span>
@@ -9,7 +9,11 @@
 
 <section class="container product-detail">
     <div class="detail-art">
-        <img src="{{ $product->cover_image ? asset($product->cover_image) : asset('images/demo/placeholder.svg') }}" alt="{{ $product->name }} artwork">
+        @if($product->product_type === 'vinyl')
+            <x-record-gallery :product="$product" />
+        @else
+            <x-product-art :product="$product" :eager="true" />
+        @endif
     </div>
     <div class="detail-info">
         <span class="eyebrow">{{ $product->is_preorder ? 'Pre-order' : ($product->product_type === 'merchandise' ? 'Merchandise' : 'Vinyl record') }}</span>
@@ -40,7 +44,7 @@
                 <p><span>Label</span>{{ $product->label->name }}</p>
             @endif
             @if($product->genres->isNotEmpty())
-                <p><span>Genre</span>{{ $product->genres->pluck('name')->join(', ') }}</p>
+                <p><span>Genre</span>{{ $product->genre_line }}</p>
             @endif
         </div>
     </div>
