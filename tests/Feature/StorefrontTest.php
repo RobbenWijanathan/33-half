@@ -122,6 +122,42 @@ class StorefrontTest extends TestCase
             ->assertSee('Up to $31');
     }
 
+    public function test_listings_page_with_numbered_links_and_keep_the_filters(): void
+    {
+        foreach (range(1, 13) as $number) {
+            Product::create([
+                'name' => 'Paging Record '.$number,
+                'slug' => 'paging-record-'.$number,
+                'product_type' => 'vinyl',
+                'price' => 20,
+                'stock' => 5,
+                'release_date' => today()->subYears(2),
+            ]);
+        }
+
+        // 8 seeded + 13 new vinyl records = 21, so two pages of 12.
+        $this->get('/vinyl?sort=name')->assertOk()
+            ->assertSee('Page 1 of 2')
+            ->assertSee('aria-current="page"', false)
+            ->assertSee('href="'.e(url('/vinyl?sort=name&page=2')).'"', false);
+
+        $this->get('/vinyl?sort=name&page=2')->assertOk()->assertSee('Page 2 of 2');
+
+        // Searching narrows it back to one page, so no pagination is shown.
+        $this->get('/vinyl?q=afterimage')->assertOk()->assertDontSee('Page 1 of');
+    }
+
+    public function test_the_discovery_scopes_can_be_chained_on_the_model(): void
+    {
+        $names = Product::search('mira')->filter(['genre' => 'ambient'])->sorted('name')->pluck('name');
+        $this->assertSame(['Small Hours'], $names->all());
+
+        $this->assertSame(
+            ['Afterimage', 'Nothing Stays Still', 'Blue Hour Notes'],
+            Product::newArrivals()->sorted('newest')->pluck('name')->all(),
+        );
+    }
+
     public function test_home_hides_the_new_arrivals_section_when_nothing_is_new(): void
     {
         $this->get('/')->assertSee('Fresh on the shelf');

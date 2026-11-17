@@ -155,7 +155,10 @@ p { line-height: 1.6; }
 .pagination { display: flex; justify-content: space-between; border-top: 1px solid var(--line); padding-top: 24px; margin-top: 50px; font-size: .75rem; }
 .pagination > div { display: flex; gap: 24px; }
 .pagination a { text-decoration: underline; }
-.pagination .disabled { color: #aaa; }
+.pagination .disabled { color: var(--muted); }
+.pagination > div { align-items: center; flex-wrap: wrap; gap: 18px; }
+.pagination .current { font-weight: 700; border-bottom: 1px solid currentColor; }
+.pagination a, .pagination .current { display: inline-flex; align-items: center; min-height: 44px; }
 .empty-state { grid-column: 1/-1; text-align: center; padding: 90px 20px; border: 1px solid var(--line); }
 .empty-state > span { font-size: 4rem; }
 .empty-state h2 { font-size: 2rem; }

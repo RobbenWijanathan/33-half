@@ -23,14 +23,7 @@
                 <button class="sort-apply" type="submit">Sort</button>
             </form>
         </div>
-        @if($activeFilters)
-            <ul class="filter-chips" aria-label="Active filters">
-                @foreach($activeFilters as $filter)
-                    <li><a class="filter-chip" href="{{ $filter['url'] }}"><span class="sr-only">Remove filter </span>{{ $filter['label'] }}<svg aria-hidden="true" viewBox="0 0 12 12" width="10" height="10"><path d="M2 2l8 8M10 2l-8 8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></a></li>
-                @endforeach
-                @if(count($activeFilters) > 1)<li><a class="filter-chips-clear" href="{{ url()->current() }}">Clear all</a></li>@endif
-            </ul>
-        @endif
+        @include('partials.filter-chips')
         @if($products->isEmpty() && $activeFilters)
             <x-empty-state
                 :title="$term ? 'No matches for “'.$term.'”' : 'Nothing matches these filters'"
@@ -40,7 +33,7 @@
         @else
             <x-product-grid :products="$products" />
         @endif
-        <x-pagination :paginator="$products" />
+        {{ $products->links('partials.pagination') }}
     </div>
 </div>
 @endsection
