@@ -89,9 +89,9 @@ class CatalogController extends Controller
 
     public function crate(): View
     {
-        return view('pages.crate', [
-            'products' => Product::vinyl()->with(['artists', 'genres'])->orderBy('id')->get(),
-        ]);
+        $products = Product::vinyl()->with(['artists', 'genres'])->orderBy('id')->get();
+
+        return view('pages.crate', compact('products'));
     }
 
     private function listing(Request $request, Builder $query, string $title, string $section, ?string $description = null): View
@@ -112,57 +112,23 @@ class CatalogController extends Controller
             [$filters['min_price'], $filters['max_price']] = [$filters['max_price'], $filters['min_price']];
         }
 
-        if ($term = $filters['q'] ?? null) {
-            $query->where(function (Builder $search) use ($term) {
-                $like = '%'.$term.'%';
-                $search->where('name', 'like', $like)
-                    ->orWhere('description', 'like', $like)
-                    ->orWhereHas('artists', fn (Builder $artists) => $artists->where('name', 'like', $like))
-                    ->orWhereHas('genres', fn (Builder $genres) => $genres->where('name', 'like', $like))
-                    ->orWhereHas('label', fn (Builder $label) => $label->where('name', 'like', $like));
-            });
-        }
+        // The model scopes do the querying; the controller only connects request, model and view.
+        $products = $query->search($filters['q'] ?? null)
+            ->filter($filters)
+            ->sorted($filters['sort'] ?? 'newest')
+            ->with('artists')
+            ->paginate(12)
+            ->withQueryString();
 
-        foreach (['genre' => 'genres', 'artist' => 'artists'] as $field => $relation) {
-            if ($slug = $filters[$field] ?? null) {
-                $query->whereHas($relation, fn (Builder $related) => $related->where('slug', $slug));
-            }
-        }
+        $genres = Genre::orderBy('name')->get();
+        $artists = Artist::orderBy('name')->get();
+        $labels = Label::orderBy('name')->get();
+        $activeFilters = $this->activeFilters($request, $filters, $genres, $artists, $labels);
+        $description = $description ?? 'Browse the shelf. Follow a sound. Find your next favorite.';
 
-        if ($slug = $filters['label'] ?? null) {
-            $query->whereHas('label', fn (Builder $label) => $label->where('slug', $slug));
-        }
-        if (isset($filters['min_price'])) {
-            $query->where('price', '>=', $filters['min_price']);
-        }
-        if (isset($filters['max_price'])) {
-            $query->where('price', '<=', $filters['max_price']);
-        }
-        if (($filters['availability'] ?? null) === 'in-stock') {
-            $query->where('stock', '>', 0)->where('is_preorder', false);
-        }
-        if (($filters['availability'] ?? null) === 'preorder') {
-            $query->where('is_preorder', true);
-        }
-
-        match ($filters['sort'] ?? 'newest') {
-            'price-low' => $query->orderBy('price'),
-            'price-high' => $query->orderByDesc('price'),
-            'name' => $query->orderBy('name'),
-            default => $query->orderByDesc('release_date')->latest('created_at')->orderByDesc('id'),
-        };
-
-        return view('pages.catalog', [
-            'title' => $title,
-            'section' => $section,
-            'description' => $description ?? 'Browse the shelf. Follow a sound. Find your next favorite.',
-            'products' => $query->with('artists')->paginate(12)->withQueryString(),
-            'genres' => $genres = Genre::orderBy('name')->get(),
-            'artists' => $artists = Artist::orderBy('name')->get(),
-            'labels' => $labels = Label::orderBy('name')->get(),
-            'filters' => $filters,
-            'activeFilters' => $this->activeFilters($request, $filters, $genres, $artists, $labels),
-        ]);
+        return view('pages.catalog', compact(
+            'title', 'section', 'description', 'products', 'genres', 'artists', 'labels', 'filters', 'activeFilters'
+        ));
     }
 
     /**
@@ -172,25 +138,32 @@ class CatalogController extends Controller
      */
     private function activeFilters(Request $request, array $filters, Collection $genres, Collection $artists, Collection $labels): array
     {
-        $names = [
-            'q' => fn ($value) => 'Search: “'.$value.'”',
-            'genre' => fn ($value) => 'Genre: '.($genres->firstWhere('slug', $value)?->name ?? $value),
-            'artist' => fn ($value) => 'Artist: '.($artists->firstWhere('slug', $value)?->name ?? $value),
-            'label' => fn ($value) => 'Label: '.($labels->firstWhere('slug', $value)?->name ?? $value),
-            'min_price' => fn ($value) => 'From $'.rtrim(rtrim(number_format((float) $value, 2), '0'), '.'),
-            'max_price' => fn ($value) => 'Up to $'.rtrim(rtrim(number_format((float) $value, 2), '0'), '.'),
-            'availability' => fn ($value) => $value === 'preorder' ? 'Pre-order' : 'In stock',
-        ];
-
         $active = [];
-        foreach ($names as $key => $describe) {
-            if (($filters[$key] ?? null) === null || $filters[$key] === '') {
+
+        foreach (['q', 'genre', 'artist', 'label', 'min_price', 'max_price', 'availability'] as $key) {
+            $value = $filters[$key] ?? null;
+            if ($value === null || $value === '') {
                 continue;
             }
-            $active[] = [
-                'label' => $describe($filters[$key]),
-                'url' => $request->fullUrlWithoutQuery([$key, 'page']),
-            ];
+
+            if ($key === 'q') {
+                $label = 'Search: “'.$value.'”';
+            } elseif ($key === 'genre') {
+                $label = 'Genre: '.($genres->firstWhere('slug', $value)->name ?? $value);
+            } elseif ($key === 'artist') {
+                $label = 'Artist: '.($artists->firstWhere('slug', $value)->name ?? $value);
+            } elseif ($key === 'label') {
+                $label = 'Label: '.($labels->firstWhere('slug', $value)->name ?? $value);
+            } elseif ($key === 'min_price') {
+                $label = 'From $'.str_replace('.00', '', number_format((float) $value, 2));
+            } elseif ($key === 'max_price') {
+                $label = 'Up to $'.str_replace('.00', '', number_format((float) $value, 2));
+            } else {
+                $label = $value === 'preorder' ? 'Pre-order' : 'In stock';
+            }
+
+            // The chip links to the current URL without this one filter, back on page 1.
+            $active[] = ['label' => $label, 'url' => $request->fullUrlWithoutQuery([$key, 'page'])];
         }
 
         return $active;
