@@ -5,7 +5,6 @@
     <div class="breadcrumbs"><a href="{{ route('home') }}">Home</a> / Cart</div>
     <h1>Your Cart</h1>
     <p class="page-lead" data-cart-items-count>{{ $items->count() }} {{ Str::plural('item', $items->count()) }} on your shelf.</p>
-    <p class="cart-feedback" data-cart-feedback role="status"></p>
     <div data-cart-empty @if($items->isNotEmpty()) hidden @endif>
         <x-empty-state title="Your cart is empty" message="Take a look around and find a record worth keeping." />
     </div>
@@ -23,7 +22,9 @@
                     <p class="cart-grand-total d-flex justify-content-between"><span>Total</span><strong data-cart-total>{{ $total }}</strong></p>
                     <p class="text-muted small">Checkout is not available yet. Your selection is saved in this browser session.</p>
                     <button class="button button-dark w-100" type="button" disabled>Checkout coming soon</button>
-                    <a class="text-link mt-3" href="{{ route('shop') }}">Continue shopping →</a>
+                    <div class="cart-continue">
+                        <a class="button button-border w-100" href="{{ route('shop') }}">Continue shopping <span aria-hidden="true">→</span></a>
+                    </div>
                 </div>
             </aside>
         </div>

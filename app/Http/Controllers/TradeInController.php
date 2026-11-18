@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Support\RecordGrades;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -10,15 +11,9 @@ use Illuminate\Validation\Rule;
 
 class TradeInController extends Controller
 {
-    public const GRADES = [
-        'M' => 'Mint (M)', 'NM' => 'Near Mint (NM)',
-        'VG+' => 'Very Good Plus (VG+)', 'VG' => 'Very Good (VG)',
-        'G' => 'Good (G)', 'F' => 'Fair (F)', 'P' => 'Poor (P)',
-    ];
-
     public function create(): View
     {
-        return view('pages.trade-in', ['grades' => self::GRADES]);
+        return view('pages.trade-in', ['grades' => RecordGrades::labels()]);
     }
 
     public function store(Request $request): RedirectResponse
@@ -26,8 +21,8 @@ class TradeInController extends Controller
         $data = $request->validate([
             'artist' => ['required', 'string', 'max:120'],
             'album' => ['required', 'string', 'max:160'],
-            'record_grade' => ['required', Rule::in(array_keys(self::GRADES))],
-            'sleeve_grade' => ['required', Rule::in(array_keys(self::GRADES))],
+            'record_grade' => ['required', Rule::in(array_keys(RecordGrades::labels()))],
+            'sleeve_grade' => ['required', Rule::in(array_keys(RecordGrades::labels()))],
             'notes' => ['nullable', 'string', 'max:2000'],
             'preference' => ['required', Rule::in(['cash', 'store_credit'])],
             'name' => ['required', 'string', 'max:120'],

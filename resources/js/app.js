@@ -1,5 +1,6 @@
-import './audio-preview';
-import './crate-digging';
+import { initAudioPreviews, preview } from './audio-preview';
+import { initCarousels } from './crate-digging';
+import { initLiveFilters } from './live-filters';
 import './cart';
 import './record-gallery';
 
@@ -22,10 +23,29 @@ if (menuButton && navigation) {
     });
 }
 
-document.querySelectorAll('[data-art-fallback]').forEach((image) => {
-    const useFallback = () => {
-        image.src = image.dataset.artFallback;
-    };
-    image.addEventListener('error', useFallback, { once: true });
-    if (image.complete && !image.naturalWidth) useFallback();
+let disposeCarousels = () => {};
+
+function enhanceRecords(root) {
+    disposeCarousels();
+    disposeCarousels = initCarousels(root);
+    initAudioPreviews(root);
+
+    root.querySelectorAll('[data-art-fallback]').forEach((image) => {
+        const useFallback = () => {
+            if (image.src !== image.dataset.artFallback) image.src = image.dataset.artFallback;
+        };
+        image.addEventListener('error', useFallback);
+        if (image.complete && !image.naturalWidth) useFallback();
+    });
+}
+
+enhanceRecords(document);
+
+initLiveFilters((root) => {
+    preview.stop();
+    enhanceRecords(root);
+});
+
+document.querySelectorAll('[data-auto-submit]').forEach((select) => {
+    select.addEventListener('change', () => select.form.requestSubmit());
 });

@@ -988,5 +988,451 @@
     "wikipedia": "https://en.wikipedia.org/wiki/Mm..Food",
     "artwork": "https://upload.wikimedia.org/wikipedia/en/8/8a/Mmfood.jpg",
     "preview": null
+  },
+  {
+    "title": "Illinois",
+    "slug": "illinois",
+    "artist": "Sufjan Stevens",
+    "released": "2005-07-05",
+    "genres": [
+      "Pop",
+      "Folk",
+      "Rock"
+    ],
+    "wikipedia": "https://en.wikipedia.org/wiki/Illinois_(Sufjan_Stevens_album)",
+    "price": 585000,
+    "description": "Sufjan Stevens’ fifth album tells stories tied to Illinois, from local landmarks to historical figures. It followed Michigan as his second album built around a US state.",
+    "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/47/9e/a3/479ea382-2686-3ea9-3def-d67d81fb2ee3/mzi.lhtprasx.jpg/600x600bb.jpg",
+    "preview": null
+  },
+  {
+    "title": "Low",
+    "slug": "low",
+    "artist": "David Bowie",
+    "released": "1977-01-14",
+    "genres": [
+      "Rock",
+      "Electronic",
+      "Ambient"
+    ],
+    "wikipedia": "https://en.wikipedia.org/wiki/Low_(David_Bowie_album)",
+    "price": 620000,
+    "description": "Low opens David Bowie’s Berlin Trilogy, made with Brian Eno and producer Tony Visconti. Short rock songs sit alongside longer instrumental pieces.",
+    "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/f7/49/2d/f7492da6-164e-b023-4b17-937329c35458/190295842895.jpg/600x600bb.jpg",
+    "preview": null
+  },
+  {
+    "title": "Marquee Moon",
+    "slug": "marquee-moon",
+    "artist": "Television",
+    "released": "1977-02-08",
+    "genres": [
+      "Rock"
+    ],
+    "wikipedia": "https://en.wikipedia.org/wiki/Marquee_Moon",
+    "price": 560000,
+    "description": "Television rehearsed these songs extensively before recording their Elektra debut. Its sound rests on the interplay between guitarists Tom Verlaine and Richard Lloyd.",
+    "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/1b/6a/c1/1b6ac100-8d0e-ec9d-4639-88b11ed2cdad/603497886029.jpg/600x600bb.jpg",
+    "preview": null
+  },
+  {
+    "title": "Highway 61 Revisited",
+    "slug": "highway-61-revisited",
+    "artist": "Bob Dylan",
+    "released": "1965-08-30",
+    "genres": [
+      "Rock",
+      "Folk"
+    ],
+    "wikipedia": "https://en.wikipedia.org/wiki/Highway_61_Revisited",
+    "price": 595000,
+    "description": "Dylan pushed further into electric music on his sixth album, recording with rock musicians as his backing band. The songs pair blues rhythms with his increasingly vivid writing.",
+    "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/f8/ff/c0/f8ffc056-55b4-2033-657d-32492d1eea25/827969239926.jpg/600x600bb.jpg",
+    "preview": null
+  },
+  {
+    "title": "Bitches Brew",
+    "slug": "bitches-brew",
+    "artist": "Miles Davis",
+    "released": "1970-03-30",
+    "genres": [
+      "Jazz",
+      "Rock"
+    ],
+    "wikipedia": "https://en.wikipedia.org/wiki/Bitches_Brew",
+    "price": 695000,
+    "description": "Miles Davis recorded these sessions in New York in August 1969. The album expanded his experimentation with electric instruments into a double LP for Columbia.",
+    "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/9b/e1/63/9be1630c-486d-760c-76cf-04282174700a/074646577424.jpg/600x600bb.jpg",
+    "preview": null
+  },
+  {
+    "title": "Endtroducing.....",
+    "slug": "endtroducing",
+    "artist": "DJ Shadow",
+    "released": "1996-09-16",
+    "genres": [
+      "Hip-Hop",
+      "Electronic"
+    ],
+    "wikipedia": "https://en.wikipedia.org/wiki/Endtroducing.....",
+    "price": 645000,
+    "description": "DJ Shadow assembled his debut almost entirely from vinyl samples. He spent two years editing and layering the sources on an Akai sampler.",
+    "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/25/b9/e4/25b9e4bf-f039-39d5-a46c-9b84e12eb818/5400863103330_cover.jpg/600x600bb.jpg",
+    "preview": null
+  },
+  {
+    "title": "Grace",
+    "slug": "grace",
+    "artist": "Jeff Buckley",
+    "released": "1994-08-15",
+    "genres": [
+      "Rock",
+      "Folk"
+    ],
+    "wikipedia": "https://en.wikipedia.org/wiki/Grace_(Jeff_Buckley_album)",
+    "price": 625000,
+    "description": "Jeff Buckley recorded his only studio album with producer Andy Wallace. Its arrangements move between originals, standards, and reinterpretations of other songwriters’ work.",
+    "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/26/d6/e3/26d6e339-a7a9-d61e-1b5f-0852a5515a55/886445517880.jpg/600x600bb.jpg",
+    "preview": null
+  },
+  {
+    "title": "Master of Reality",
+    "slug": "master-of-reality",
+    "artist": "Black Sabbath",
+    "released": "1971-08-06",
+    "genres": [
+      "Metal",
+      "Rock"
+    ],
+    "wikipedia": "https://en.wikipedia.org/wiki/Master_of_Reality",
+    "price": 585000,
+    "description": "Black Sabbath recorded their third album at Island Studios with longtime producer Rodger Bain. Its heavy, low-tuned sound influenced later stoner and sludge metal.",
+    "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/c2/9f/a1/c29fa109-8c22-bb7f-82f2-a6891d961c28/075992725323.jpg/600x600bb.jpg",
+    "preview": null
+  },
+  {
+    "title": "In Utero",
+    "slug": "in-utero",
+    "artist": "Nirvana",
+    "released": "1993-09-13",
+    "genres": [
+      "Rock"
+    ],
+    "wikipedia": "https://en.wikipedia.org/wiki/In_Utero",
+    "price": 610000,
+    "description": "For their final studio album, Nirvana brought in Steve Albini and pursued a rougher sound. DGC released it in September 1993.",
+    "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/e3/20/03/e32003a4-99bc-1c70-40ba-001882f35dba/00602537526840.rgb.jpg/600x600bb.jpg",
+    "preview": null
+  },
+  {
+    "title": "Soundtracks for the Blind",
+    "slug": "soundtracks-for-the-blind",
+    "artist": "Swans",
+    "released": "1996-10-22",
+    "genres": [
+      "Experimental",
+      "Rock",
+      "Ambient"
+    ],
+    "wikipedia": "https://en.wikipedia.org/wiki/Soundtracks_for_the_Blind",
+    "price": 960000,
+    "description": "Michael Gira built this Swans double album from recordings gathered across years. It combines band performances with archival tapes and other found sounds.",
+    "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/84/67/bb/8467bbdd-e2f7-f17e-3f1d-6489aef4d7d0/658457000120_cover.jpg/600x600bb.jpg",
+    "preview": null
+  },
+  {
+    "title": "Donuts",
+    "slug": "donuts",
+    "artist": "J Dilla",
+    "released": "2006-02-07",
+    "genres": [
+      "Hip-Hop",
+      "Soul"
+    ],
+    "wikipedia": "https://en.wikipedia.org/wiki/Donuts_(album)",
+    "price": 620000,
+    "description": "Released on J Dilla’s 32nd birthday, Donuts packs 31 instrumental pieces into a continuous loop. It was his last album released during his lifetime.",
+    "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/63/d3/c5/63d3c537-ac30-86e7-8e69-8a03a5346209/792.jpg/600x600bb.jpg",
+    "preview": null
+  },
+  {
+    "title": "Led Zeppelin IV",
+    "slug": "led-zeppelin-iv",
+    "artist": "Led Zeppelin",
+    "released": "1971-11-08",
+    "genres": [
+      "Rock",
+      "Folk"
+    ],
+    "wikipedia": "https://en.wikipedia.org/wiki/Led_Zeppelin_IV",
+    "price": 645000,
+    "description": "Led Zeppelin’s untitled fourth album was produced by Jimmy Page and recorded largely at Headley Grange. It includes “Black Dog” and “Stairway to Heaven.”",
+    "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/5c/15/9b/5c159b27-95ca-b9a7-84e3-28e795fffd39/dj.kvkrpptq.jpg/600x600bb.jpg",
+    "preview": null
+  },
+  {
+    "title": "Ants From Up There",
+    "slug": "ants-from-up-there",
+    "artist": "Black Country, New Road",
+    "released": "2022-02-04",
+    "genres": [
+      "Rock",
+      "Pop"
+    ],
+    "wikipedia": "https://en.wikipedia.org/wiki/Ants_from_Up_There",
+    "price": 690000,
+    "description": "Black Country, New Road recorded their second album at Chale Abbey with live engineer Sergio Maschetzko. It was the last album with founding vocalist Isaac Wood.",
+    "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/8f/6a/c6/8f6ac6c6-5bcd-fa25-94f2-fd9922725215/5054429151442.png/600x600bb.jpg",
+    "preview": null
+  },
+  {
+    "title": "Doolittle",
+    "slug": "doolittle",
+    "artist": "Pixies",
+    "released": "1989-04-17",
+    "genres": [
+      "Rock"
+    ],
+    "wikipedia": "https://en.wikipedia.org/wiki/Doolittle_(album)",
+    "price": 585000,
+    "description": "Pixies’ second album became the band’s breakthrough after its 1989 release on 4AD. Its wiry arrangements shift quickly between melodic hooks and noisy guitar.",
+    "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/34/07/72/34077276-8f67-c638-8c4f-73dd89d2dfab/5014436905025.png/600x600bb.jpg",
+    "preview": null
+  },
+  {
+    "title": "Late Registration",
+    "slug": "late-registration",
+    "artist": "Kanye West",
+    "released": "2005-08-30",
+    "genres": [
+      "Hip-Hop",
+      "Soul"
+    ],
+    "wikipedia": "https://en.wikipedia.org/wiki/Late_Registration",
+    "price": 705000,
+    "description": "Kanye West recorded his second album over roughly a year, working with producer Jon Brion in Hollywood and New York. It broadens the sound of his debut with layered arrangements.",
+    "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/0e/90/3c/0e903c43-9d81-f91b-90f1-727a58f7fb2c/00602498824030.rgb.jpg/600x600bb.jpg",
+    "preview": null
+  },
+  {
+    "title": "Electric Ladyland",
+    "slug": "electric-ladyland",
+    "artist": "The Jimi Hendrix Experience",
+    "released": "1968-10-16",
+    "genres": [
+      "Rock"
+    ],
+    "wikipedia": "https://en.wikipedia.org/wiki/Electric_Ladyland",
+    "price": 695000,
+    "description": "Jimi Hendrix took sole production credit on this final Jimi Hendrix Experience studio album. The 1968 double LP was the group’s only US number-one album.",
+    "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/a6/b8/45/a6b84589-6ff7-a462-9ff9-170b724980d5/dj.wjkdwlks.jpg/600x600bb.jpg",
+    "preview": null
+  },
+  {
+    "title": "The Downward Spiral",
+    "slug": "the-downward-spiral",
+    "artist": "Nine Inch Nails",
+    "released": "1994-03-08",
+    "genres": [
+      "Rock",
+      "Electronic"
+    ],
+    "wikipedia": "https://en.wikipedia.org/wiki/The_Downward_Spiral",
+    "price": 680000,
+    "description": "Nine Inch Nails’ second studio album follows a character’s descent into self-destruction. The tracks move between industrial noise, electronic textures and quieter passages.",
+    "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/55/e0/85/55e0851e-11df-3b6a-7c54-4eef0efc2bed/15UMGIM67680.rgb.jpg/600x600bb.jpg",
+    "preview": null
+  },
+  {
+    "title": "Mezzanine",
+    "slug": "mezzanine",
+    "artist": "Massive Attack",
+    "released": "1998-04-20",
+    "genres": [
+      "Electronic",
+      "Rock"
+    ],
+    "wikipedia": "https://en.wikipedia.org/wiki/Mezzanine_(album)",
+    "price": 735000,
+    "description": "Massive Attack turned toward a darker, more atmospheric sound on their third album, drawing from post-punk, industrial music, hip-hop and dub.",
+    "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/0a/98/55/0a98555b-8d9d-3b46-660a-b91261557d17/00724384559953.rgb.jpg/600x600bb.jpg",
+    "preview": null
+  },
+  {
+    "title": "The Doors",
+    "slug": "the-doors",
+    "artist": "The Doors",
+    "released": "1967-01-04",
+    "genres": [
+      "Rock"
+    ],
+    "wikipedia": "https://en.wikipedia.org/wiki/The_Doors_(album)",
+    "price": 575000,
+    "description": "The Doors recorded their debut at Sunset Sound with producer Paul A. Rothchild. It features the full-length “Light My Fire” and closes with “The End.”",
+    "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/97/e2/ce/97e2ce16-02e1-54f6-3896-dcc55249ff7d/603497838738.jpg/600x600bb.jpg",
+    "preview": null
+  },
+  {
+    "title": "Station to Station",
+    "slug": "station-to-station",
+    "artist": "David Bowie",
+    "released": "1976-01-23",
+    "genres": [
+      "Rock",
+      "Funk",
+      "Soul"
+    ],
+    "wikipedia": "https://en.wikipedia.org/wiki/Station_to_Station",
+    "price": 620000,
+    "description": "Station to Station introduced Bowie’s Thin White Duke persona. He co-produced the album with Harry Maslin, recording most of it at Cherokee Studios in Los Angeles.",
+    "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/91/d8/47/91d847ac-8e39-85b0-36a6-ab3b8db46803/190295990268.jpg/600x600bb.jpg",
+    "preview": null
+  },
+  {
+    "title": "Ride the Lightning",
+    "slug": "ride-the-lightning",
+    "artist": "Metallica",
+    "released": "1984-07-27",
+    "genres": [
+      "Metal"
+    ],
+    "wikipedia": "https://en.wikipedia.org/wiki/Ride_the_Lightning",
+    "price": 595000,
+    "description": "Metallica recorded their second album in Copenhagen with Flemming Rasmussen. It arrived on the independent Megaforce label in July 1984.",
+    "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Features125/v4/0f/7a/74/0f7a7472-92fa-e77d-384a-1e4304705e83/dj.jbiruenb.png/600x600bb.jpg",
+    "preview": null
+  },
+  {
+    "title": "Laughing Stock",
+    "slug": "laughing-stock",
+    "artist": "Talk Talk",
+    "released": "1991-09-16",
+    "genres": [
+      "Rock",
+      "Experimental",
+      "Jazz"
+    ],
+    "wikipedia": "https://en.wikipedia.org/wiki/Laughing_Stock",
+    "price": 655000,
+    "description": "Talk Talk’s final album was made after bassist Paul Webb left, with Mark Hollis and Lee Harris leading the sessions. The music makes room for silence, texture and improvisation.",
+    "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Music118/v4/4e/d3/44/4ed34448-31df-5d76-5043-77c1dc257575/00042284771726.rgb.jpg/600x600bb.jpg",
+    "preview": null
+  },
+  {
+    "title": "Imaginal Disk",
+    "slug": "imaginal-disk",
+    "artist": "Magdalena Bay",
+    "released": "2024-08-23",
+    "genres": [
+      "Pop",
+      "Electronic"
+    ],
+    "wikipedia": "https://en.wikipedia.org/wiki/Imaginal_Disk",
+    "price": 710000,
+    "description": "Magdalena Bay duo Mica Tenenbaum and Matthew Lewin wrote and produced this concept album themselves. Its story follows a character named True after she encounters a disc.",
+    "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/8f/e3/6c/8fe36c7a-d280-2d0e-8e67-4ee0fd4523cd/810090095448.png/600x600bb.jpg",
+    "preview": null
+  },
+  {
+    "title": "Blood on the Tracks",
+    "slug": "blood-on-the-tracks",
+    "artist": "Bob Dylan",
+    "released": "1975-01-20",
+    "genres": [
+      "Folk",
+      "Rock"
+    ],
+    "wikipedia": "https://en.wikipedia.org/wiki/Blood_on_the_Tracks",
+    "price": 625000,
+    "description": "Dylan returned to Columbia for his fifteenth studio album. He began recording it in New York and revisited several tracks in Minnesota before it was released.",
+    "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/34/6e/4d/346e4d1c-c9ef-cf7f-96d9-aad97286febb/074643323529.jpg/600x600bb.jpg",
+    "preview": null
+  },
+  {
+    "title": "Blonde on Blonde",
+    "slug": "blonde-on-blonde",
+    "artist": "Bob Dylan",
+    "released": "1966-06-20",
+    "genres": [
+      "Rock",
+      "Folk"
+    ],
+    "wikipedia": "https://en.wikipedia.org/wiki/Blonde_on_Blonde",
+    "price": 690000,
+    "description": "Dylan started recording this double album in New York with members of the Hawks among his backing musicians. Sessions later moved to Nashville and the record came out in 1966.",
+    "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/20/9d/bf/209dbf58-f698-7181-33de-0c29480beba0/074640084126.jpg/600x600bb.jpg",
+    "preview": null
+  },
+  {
+    "title": "Symbolic",
+    "slug": "symbolic",
+    "artist": "Death",
+    "released": "1995-03-21",
+    "genres": [
+      "Metal"
+    ],
+    "wikipedia": "https://en.wikipedia.org/wiki/Symbolic_(Death_album)",
+    "price": 625000,
+    "description": "Death’s sixth album took a more melodic direction while retaining the band’s intricate playing. It was the only Death album to feature guitarist Bobby Koelble and bassist Kelly Conlon.",
+    "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Music/da/91/91/mzi.mjxeohne.jpg/600x600bb.jpg",
+    "preview": null
+  },
+  {
+    "title": "Karma",
+    "slug": "karma",
+    "artist": "Pharoah Sanders",
+    "released": "1969-05-01",
+    "genres": [
+      "Jazz"
+    ],
+    "wikipedia": "https://en.wikipedia.org/wiki/Karma_(Pharoah_Sanders_album)",
+    "price": 650000,
+    "description": "Pharoah Sanders released this spiritual jazz album through Impulse! in 1969. Its centerpiece is the extended “The Creator Has a Master Plan.”",
+    "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/01/36/a6/0136a666-36d2-caf1-efb1-da77a646d104/06UMGIM03764.rgb.jpg/600x600bb.jpg",
+    "preview": null
+  },
+  {
+    "title": "Carrie & Lowell",
+    "slug": "carrie-and-lowell",
+    "artist": "Sufjan Stevens",
+    "released": "2015-03-31",
+    "genres": [
+      "Folk"
+    ],
+    "wikipedia": "https://en.wikipedia.org/wiki/Carrie_%26_Lowell",
+    "price": 585000,
+    "description": "Sufjan Stevens produced his seventh album for Asthmatic Kitty with contributions from Thomas Bartlett, Laura Veirs and other collaborators. It returns to a spare folk sound.",
+    "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/ba/61/bc/ba61bcaf-2034-f13e-6f66-fdb578d618dc/656605609966.jpg/600x600bb.jpg",
+    "preview": null
+  },
+  {
+    "title": "Closer",
+    "slug": "closer",
+    "artist": "Joy Division",
+    "released": "1980-07-18",
+    "genres": [
+      "Rock"
+    ],
+    "wikipedia": "https://en.wikipedia.org/wiki/Closer_(Joy_Division_album)",
+    "price": 610000,
+    "description": "Martin Hannett produced Joy Division’s second and final studio album. Factory Records released it in July 1980, after singer Ian Curtis’s death.",
+    "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Features114/v4/d9/2a/d1/d92ad12e-cdf2-e567-9612-af2fdfa82237/dj.uzqznczn.jpg/600x600bb.jpg",
+    "preview": null
+  },
+  {
+    "title": "Aquemini",
+    "slug": "aquemini",
+    "artist": "Outkast",
+    "released": "1998-09-29",
+    "genres": [
+      "Hip-Hop",
+      "Soul",
+      "Funk"
+    ],
+    "wikipedia": "https://en.wikipedia.org/wiki/Aquemini",
+    "price": 735000,
+    "description": "Outkast’s third album takes its name from Big Boi’s and André 3000’s zodiac signs. Their differing personalities are a recurring theme throughout the record.",
+    "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/0e/48/dd/0e48dd9a-07c9-46de-a838-b4ddb4e508a7/886448814191.jpg/600x600bb.jpg",
+    "preview": null
   }
 ]

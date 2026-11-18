@@ -56,7 +56,7 @@ For Laravel's development server, set `APP_URL=http://127.0.0.1:8000` and run `p
 | `app/Models` | Product, Artist, Genre, Label and their relationships |
 | `app/Http/Controllers` | Page, catalog, and session cart logic |
 | `database/migrations` | Catalog tables and Laravel's default support tables |
-| `database/seeders/CatalogSeeder.php` | 60 chart albums and three merchandise mockups |
+| `database/seeders/CatalogSeeder.php` | 90 chart albums and three merchandise mockups |
 | `resources/views/layouts` | Shared HTML shell |
 | `resources/views/components` | Reusable storefront pieces |
 | `resources/views/pages` | Home, catalog, directory, crate, cart, and information pages |
@@ -107,7 +107,7 @@ The homepage shows four New Arrivals and links to Shop Vinyl. Shop Vinyl display
 
 The sun/moon toggle follows the system until a theme is selected. It stores the chosen theme in the browser. Record galleries use alternate cover images where available and the front cover as a reference otherwise.
 
-The merchandise listing offers price and name sorting. The vinyl catalog also accepts `condition=new` or `condition=used`.
+The catalog, merchandise, and crate filters update as you change them. Filter and sort choices stay in the URL for sharing and browser history. The vinyl catalog also accepts `condition=new` or `condition=used`.
 
 The trade-in form saves demo requests in the current Laravel session, and the cart saves quantities as they change. Checkout, order processing and account management are outside this version.
 

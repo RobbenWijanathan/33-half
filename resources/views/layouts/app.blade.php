@@ -16,9 +16,8 @@
     <a class="skip-link" href="#main-content">Skip to content</a>
     <x-announcement-bar />
     <x-navbar />
-    @if(session('notice'))
-        <div class="container alert alert-success mt-3" role="status">{{ session('notice') }}</div>
-    @endif
+    <div class="notice-toast" role="status" aria-atomic="true" data-notice
+        @if(session('notice')) data-visible data-kind="{{ session('notice_kind', 'success') }}" @endif>{{ session('notice') }}</div>
     @if($errors->any())
         <div class="container alert alert-danger mt-3" role="alert">
             <ul class="mb-0">

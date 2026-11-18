@@ -26,6 +26,9 @@ class StorefrontTest extends TestCase
         $this->get('/')->assertSee('<title>33½ Records - Home</title>', false);
         $this->get('/new-arrivals')->assertRedirect('/vinyl');
         $this->get('/records/ok-computer')->assertOk()->assertSee('<title>33½ Records - OK Computer</title>', false);
+        $this->get('/records/illmatic')->assertOk()
+            ->assertSee('Very Good Plus (VG+)')->assertSee('Very Good (VG)')
+            ->assertSee('The sleeve grade describes the outer cover.');
         $this->get('/merch/33-studio-tee')->assertOk()->assertSee('Studio Tee');
         $this->get('/artists/radiohead')->assertOk();
         $this->get('/genres/ambient')->assertOk();
@@ -45,7 +48,8 @@ class StorefrontTest extends TestCase
 
     public function test_album_seed_and_merchandise_filters(): void
     {
-        $this->assertSame(60, Product::vinyl()->count());
+        $this->assertSame(90, Product::vinyl()->count());
+        $this->assertDatabaseHas('products', ['slug' => 'imaginal-disk', 'product_type' => 'vinyl']);
         $this->assertFalse(Product::vinyl()->has('genres', '>', 3)->exists());
         $this->get('/vinyl?condition=used')->assertOk()
             ->assertSee('Illmatic')->assertDontSee('Vespertine');
@@ -60,7 +64,7 @@ class StorefrontTest extends TestCase
         $pageTwo = $this->get('/vinyl?sort=name&page=2')->assertOk()->viewData('products');
 
         $this->assertCount(48, $pageOne);
-        $this->assertCount(12, $pageTwo);
+        $this->assertCount(42, $pageTwo);
         $this->assertStringContainsString('sort=name', $pageOne->nextPageUrl());
 
         $this->get('/vinyl?genre=idm')->assertOk()

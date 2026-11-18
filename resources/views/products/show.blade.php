@@ -25,10 +25,7 @@
             <div class="detail-preview"><x-audio-preview-control :product="$product" /><span>Listen to a short preview</span></div>
         @endif
         @if($product->product_type === 'vinyl')
-            <div class="grade-boxes">
-                <div><span>Record</span><strong>{{ $product->record_grade ?: ($product->condition === 'new' ? 'New' : 'Not graded') }}</strong></div>
-                <div><span>Sleeve</span><strong>{{ $product->sleeve_grade ?: ($product->condition === 'new' ? 'New' : 'Not graded') }}</strong></div>
-            </div>
+            <x-record-condition :product="$product" />
         @endif
         <x-add-to-cart-button :product="$product" />
         <p class="detail-note">{{ $product->is_preorder ? 'Pre-order item · fulfillment details to be added.' : ($product->stock > 0 ? $product->stock.' in stock' : 'Currently unavailable') }}</p>

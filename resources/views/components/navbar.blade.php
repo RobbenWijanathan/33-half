@@ -15,7 +15,7 @@
                         <option value="{{ $value }}" @selected(session('currency', 'IDR') === $value)>{{ $label }}</option>
                     @endforeach
                 </select>
-                <button class="sort-submit button button-border" type="submit">Apply</button>
+                <noscript><button class="button button-border" type="submit">Update currency</button></noscript>
             </form>
             <a class="cart-link" href="{{ route('cart.index') }}">Cart <span data-cart-count>{{ array_sum(session('cart', [])) }}</span></a>
             <x-theme-toggle />

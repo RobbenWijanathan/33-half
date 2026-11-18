@@ -57,19 +57,21 @@ window.addEventListener('pointerdown', () => { interacted = true; }, { once: tru
 window.addEventListener('keydown', () => { interacted = true; }, { once: true });
 audio.addEventListener('ended', () => stop());
 
-document.querySelectorAll('[data-preview-card]').forEach((card) => {
-    card.addEventListener('mouseenter', () => {
-        if (matchMedia('(hover: hover) and (pointer: fine)').matches) play(card, card.dataset.audioUrl, card.dataset.startTime);
+export function initAudioPreviews(root) {
+    root.querySelectorAll('[data-preview-card]').forEach((card) => {
+        card.addEventListener('mouseenter', () => {
+            if (matchMedia('(hover: hover) and (pointer: fine)').matches) play(card, card.dataset.audioUrl, card.dataset.startTime);
+        });
+        card.addEventListener('mouseleave', () => { if (active === card) stop({ fade: true }); });
     });
-    card.addEventListener('mouseleave', () => { if (active === card) stop({ fade: true }); });
-});
-document.querySelectorAll('[data-preview-button]').forEach((button) => {
-    button.addEventListener('click', () => {
-        interacted = true;
-        const owner = button.closest('[data-preview-card]') || button;
-        if (active === owner) stop({ fade: true });
-        else play(owner, button.dataset.audioUrl, button.dataset.startTime, { requireInteraction: false });
+    root.querySelectorAll('[data-preview-button]').forEach((button) => {
+        button.addEventListener('click', () => {
+            interacted = true;
+            const owner = button.closest('[data-preview-card]') || button;
+            if (active === owner) stop({ fade: true });
+            else play(owner, button.dataset.audioUrl, button.dataset.startTime, { requireInteraction: false });
+        });
     });
-});
+}
 
 export const preview = { play, stop, hasInteracted: () => interacted };

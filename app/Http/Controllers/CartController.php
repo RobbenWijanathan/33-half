@@ -25,7 +25,7 @@ class CartController extends Controller
         $limit = $product->is_preorder ? 99 : min(99, $product->stock);
 
         if ($limit < 1) {
-            return back()->with('notice', 'This item is currently out of stock.');
+            return back()->with(['notice' => 'This item is currently out of stock.', 'notice_kind' => 'error']);
         }
 
         $cart = $request->session()->get('cart', []);

@@ -1,6 +1,7 @@
+import { showNotice } from './notices';
+
 const cart = document.querySelector('[data-cart]');
 if (cart) {
-    const feedback = cart.querySelector('[data-cart-feedback]');
     let queue = Promise.resolve();
 
     cart.querySelectorAll('[data-quantity-form]').forEach((form) => {
@@ -42,7 +43,7 @@ if (cart) {
                         : result.itemCount + ' items on your shelf.';
                     cart.querySelector('[data-cart-subtotal]').textContent = result.subtotal;
                     cart.querySelector('[data-cart-total]').textContent = result.total;
-                    feedback.textContent = result.quantity === 0 ? 'An unavailable item was removed.' : 'Cart updated.';
+                    showNotice(result.quantity === 0 ? 'An unavailable item was removed.' : 'Cart updated.');
                     if (!result.itemCount) {
                         cart.querySelector('[data-cart-content]').hidden = true;
                         cart.querySelector('[data-cart-empty]').hidden = false;
@@ -52,7 +53,7 @@ if (cart) {
                         pendingQuantity = savedQuantity;
                         if (input.value === quantity) input.value = savedQuantity;
                     }
-                    feedback.textContent = 'Could not update the cart. Please try again.';
+                    showNotice('Could not update the cart. Please try again.', 'error');
                 }
             });
         }

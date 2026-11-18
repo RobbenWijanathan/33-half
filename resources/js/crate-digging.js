@@ -1,7 +1,7 @@
 
 import { preview } from './audio-preview';
 
-document.querySelectorAll('[data-record-carousel]').forEach((carousel) => {
+function initCarousel(carousel) {
     const scroller = carousel.querySelector('[data-carousel-window]');
     const records = [...carousel.querySelectorAll('[data-carousel-record]')];
     const captions = [...carousel.querySelectorAll('[data-carousel-caption]')];
@@ -106,9 +106,16 @@ document.querySelectorAll('[data-record-carousel]').forEach((carousel) => {
     });
 
     // Keep the selected sleeve on the left when the mobile layout changes size.
-    new ResizeObserver(() => scrollToRecord(focusedIndex, false)).observe(scroller);
-});
+    const observer = new ResizeObserver(() => scrollToRecord(focusedIndex, false));
+    observer.observe(scroller);
 
-document.querySelectorAll('[data-auto-submit]').forEach((select) => {
-    select.addEventListener('change', () => select.form.requestSubmit());
-});
+    return () => {
+        observer.disconnect();
+        if (scrollFrame !== null) cancelAnimationFrame(scrollFrame);
+    };
+}
+
+export function initCarousels(root) {
+    const dispose = [...root.querySelectorAll('[data-record-carousel]')].map(initCarousel);
+    return () => dispose.forEach((cleanup) => cleanup());
+}
