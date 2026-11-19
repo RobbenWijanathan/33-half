@@ -3,6 +3,7 @@ import { initCarousels } from './crate-digging';
 import { initLiveFilters } from './live-filters';
 import './cart';
 import './record-gallery';
+import './commerce';
 
 const menuButton = document.querySelector('.menu-toggle');
 const navigation = document.querySelector('#main-navigation');

@@ -1,17 +1,10 @@
 @props(['status'])
-
 @php
-    $label = match ($status) {
-        'waiting_for_delivery' => 'Waiting for Delivery',
-        'delivered' => 'Delivered',
-        'accepted' => 'Accepted',
-        default => 'Pending Review',
-    };
     $tone = match ($status) {
-        'waiting_for_delivery' => 'waiting',
-        'delivered' => 'delivered',
-        'accepted' => 'accepted',
-        default => 'review',
+        'completed', 'accepted', 'picked_up', 'paid', 'delivered' => 'accepted',
+        'rejected', 'declined', 'cancelled', 'refunded' => 'closed',
+        'shipped', 'out_for_delivery', 'inspection', 'confirmed', 'ready_for_pickup' => 'delivered',
+        default => 'waiting',
     };
 @endphp
-<span class="status-badge status-badge--{{ $tone }}">{{ $label }}</span>
+<span class="status-badge status-badge--{{ $tone }}">{{ Str::headline($status) }}</span>

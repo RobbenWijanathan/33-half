@@ -1,4 +1,5 @@
 @import './theme.css';
+@import './commerce.css';
 
 /* Bootstrap handles the grid. These styles define the 33½ design. */
 * {

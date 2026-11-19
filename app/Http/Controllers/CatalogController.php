@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Artist;
+use App\Models\Crate;
 use App\Models\Genre;
 use App\Models\Product;
 use App\Support\GenreTaxonomy;
@@ -38,7 +39,7 @@ class CatalogController extends Controller
     {
         abort_if(request()->routeIs('merch.show') && $product->product_type !== 'merchandise', 404);
         abort_if(request()->routeIs('products.show') && $product->product_type !== 'vinyl', 404);
-        $product->load(['artists', 'genres', 'label']);
+        $product->load(['artists', 'genres', 'label', 'variants']);
 
         return view('products.show', [
             'product' => $product,
@@ -76,7 +77,7 @@ class CatalogController extends Controller
     public function crates(Request $request): View
     {
         $filters = $request->validate([
-            'type' => ['nullable', 'in:all,genres,artists'],
+            'type' => ['nullable', 'in:all,genres,artists,curated'],
             'sort' => ['nullable', 'in:alphabetical,count'],
         ]);
         $sort = $filters['sort'] ?? 'alphabetical';
@@ -102,7 +103,14 @@ class CatalogController extends Controller
             'letters' => $letters,
             'type' => $filters['type'] ?? 'all',
             'sort' => $sort,
+            'curatedCrates' => Crate::with(['products' => fn ($query) => $query->with('artists')->latest('id')])
+                ->withCount('products')->orderBy($sort === 'count' ? 'products_count' : 'name', $sort === 'count' ? 'desc' : 'asc')->get(),
         ]);
+    }
+
+    public function curatedCrate(Request $request, Crate $crate): View
+    {
+        return $this->collection($request, Product::vinyl()->whereHas('crates', fn ($query) => $query->whereKey($crate->id)), $crate->name, 'artist', $crate->description ?? '');
     }
 
     public function artistLetter(Request $request, string $letter): View
@@ -117,7 +125,7 @@ class CatalogController extends Controller
         return $this->collection($request, Product::vinyl(), 'Crate-Digging', 'newest');
     }
 
-    private function collection(Request $request, Builder $query, string $title, string $defaultSort = 'artist'): View
+    private function collection(Request $request, Builder $query, string $title, string $defaultSort = 'artist', string $description = ''): View
     {
         $filters = $request->validate(['sort' => ['nullable', 'in:artist,title,newest']]);
         $sort = $filters['sort'] ?? $defaultSort;
@@ -133,6 +141,7 @@ class CatalogController extends Controller
             'title' => $title,
             'products' => $products->values(),
             'sort' => $sort,
+            'description' => $description,
         ]);
     }
 

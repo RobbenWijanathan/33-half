@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Product;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -19,7 +20,7 @@ class StorefrontTest extends TestCase
 
     public function test_the_main_pages_and_product_details_render(): void
     {
-        foreach (['/', '/shop', '/vinyl', '/merch', '/artists', '/genres', '/pre-orders', '/crate-digging', '/about', '/contact', '/cart', '/crates', '/trade-in', '/your-quotes'] as $url) {
+        foreach (['/', '/shop', '/vinyl', '/merch', '/artists', '/genres', '/pre-orders', '/crate-digging', '/about', '/contact', '/crates', '/trade-in'] as $url) {
             $this->get($url)->assertOk();
         }
 
@@ -36,6 +37,7 @@ class StorefrontTest extends TestCase
 
     public function test_catalog_filters_and_session_cart_work(): void
     {
+        $this->actingAs(User::factory()->create());
         $this->get('/shop?genre=jazz')->assertOk()->assertSee('A Love Supreme')->assertDontSee('Abbey Road');
         $product = Product::where('slug', 'ok-computer')->firstOrFail();
         $this->post(route('cart.add', $product), ['quantity' => 2])->assertRedirect();
@@ -76,6 +78,7 @@ class StorefrontTest extends TestCase
 
     public function test_currency_and_live_cart_totals_share_the_session(): void
     {
+        $this->actingAs(User::factory()->create());
         $record = Product::where('slug', 'illmatic')->firstOrFail();
         $tee = Product::where('slug', '33-studio-tee')->firstOrFail();
         $this->post(route('cart.add', $record), ['quantity' => 1])->assertRedirect();

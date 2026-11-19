@@ -32,6 +32,9 @@ class CatalogSeeder extends Seeder
 
     private function seedAlbum(array $album, int $rank): void
     {
+        if (Product::withTrashed()->where('slug', $album['slug'])->exists()) {
+            return;
+        }
         $artist = Artist::firstOrCreate(
             ['slug' => Str::slug($album['artist'])],
             ['name' => $album['artist']],
@@ -78,7 +81,7 @@ class CatalogSeeder extends Seeder
             ['Listening Room Tote', 'Tote bags', 288000, 10],
             ['Side B Poster', 'Posters', 256000, 11],
         ] as [$name, $category, $price, $cover]) {
-            Product::updateOrCreate(['slug' => Str::slug($name)], [
+            Product::withTrashed()->firstOrCreate(['slug' => Str::slug($name)], [
                 'name' => $name,
                 'description' => match ($category) {
                     'T-shirts' => 'A charcoal shop tee with the 33½ Records mark across the chest.',

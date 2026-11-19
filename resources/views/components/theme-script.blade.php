@@ -20,6 +20,7 @@
             const theme = preference ?? (systemTheme.matches ? 'dark' : 'light');
             const isDark = theme === 'dark';
             root.dataset.theme = theme;
+            root.dataset.bsTheme = theme;
             themeColor.content = isDark ? '#231714' : '#350021';
             toggle?.setAttribute('aria-pressed', String(isDark));
             if (toggle) toggle.title = isDark ? 'Switch to light mode' : 'Switch to dark mode';

@@ -7,9 +7,12 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model
 {
+    use SoftDeletes;
+
     protected $fillable = [
         'name', 'slug', 'description', 'product_type', 'merch_category', 'price',
         'condition', 'record_grade', 'sleeve_grade', 'gallery_images', 'currency', 'stock', 'cover_image', 'audio_preview_url', 'preview_start_time',
@@ -34,6 +37,9 @@ class Product extends Model
 
     public function getCoverUrlAttribute(): string
     {
+        if (str_starts_with($this->cover_image ?? '', 'storage/')) {
+            return asset($this->cover_image);
+        }
         $cachedCover = 'images/albums/'.$this->slug.'.webp';
         if (is_file(public_path($cachedCover))) {
             return asset($cachedCover);
@@ -80,6 +86,16 @@ class Product extends Model
     public function artists(): BelongsToMany
     {
         return $this->belongsToMany(Artist::class);
+    }
+
+    public function variants()
+    {
+        return $this->hasMany(ProductVariant::class);
+    }
+
+    public function crates()
+    {
+        return $this->belongsToMany(Crate::class);
     }
 
     public function genres(): BelongsToMany

@@ -128,7 +128,8 @@ dialog::backdrop { background: #160d09aa; }
     .theme-interactive :is(body, .site-header, .announcement-bar, .site-footer, .header-search, .button,
         .theme-toggle, .currency-form select, .menu-toggle, .form-control, .quantity-selector input,
         .about-banner, .about-stories, .cream-panel, .trade-form, .demo-note, .cart-summary,
-        .quote-card, .preview-button, .modal-content, .condition-option span) {
+        .quote-card, .preview-button, .modal-content, .condition-option span, .account-panel, .account-nav,
+        .table, .form-select, .dropdown-menu, .dropdown-item, .page-link, .profile-toggle) {
         transition: background-color .18s ease, color .18s ease, border-color .18s ease;
     }
 }
