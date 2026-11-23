@@ -110,4 +110,66 @@ class StorefrontTest extends TestCase
             ->assertSee('Vespertine')->assertDontSee('Illmatic');
         $this->get('/crates/artists/Z')->assertOk()->assertSee('This crate is empty');
     }
+
+    // ----- Music discovery: search -----
+
+    public function test_search_matches_genre_label_and_description_as_well_as_title_and_artist(): void
+    {
+        // Genre: "jazz" is in neither the title nor the artist of A Love Supreme.
+        $this->get('/shop?q=jazz')->assertOk()->assertSee('A Love Supreme')->assertDontSee('Abbey Road');
+
+        $label = \App\Models\Label::create(['name' => 'Quiet Wax Pressings', 'slug' => 'quiet-wax-pressings']);
+        Product::where('slug', 'ok-computer')->update([
+            'label_id' => $label->id,
+            'description' => 'Pressed on translucent orange vinyl.',
+        ]);
+
+        $this->get('/shop?q=quiet+wax')->assertOk()->assertSee('OK Computer')->assertDontSee('A Love Supreme');
+        $this->get('/shop?q=translucent')->assertOk()->assertSee('OK Computer')->assertDontSee('A Love Supreme');
+
+        $this->assertTrue(Product::search('translucent')->where('slug', 'ok-computer')->exists());
+        $this->assertSame(Product::count(), Product::search('   ')->count()); // A blank search changes nothing.
+    }
+
+    public function test_a_search_names_itself_and_can_be_cleared(): void
+    {
+        $this->get('/vinyl?q=radiohead&sort=name')->assertOk()
+            ->assertSee('for “radiohead”')
+            ->assertSee('Search: “radiohead”')
+            // Clearing the search keeps the other choices (here, the sort).
+            ->assertSee('href="'.e(url('/vinyl?sort=name')).'"', false);
+
+        $this->get('/vinyl')->assertOk()->assertDontSee('search-chip', false);
+    }
+
+    public function test_a_search_with_no_matches_explains_itself_and_offers_a_way_back(): void
+    {
+        $this->get('/shop?q=zzqxv')->assertOk()
+            ->assertSee('No matches for “zzqxv”')
+            ->assertSee('Clear search')
+            ->assertDontSee('No records found');
+
+        // Other empty pages keep the original message.
+        $this->get('/vinyl?condition=used&genre=does-not-exist')->assertOk()->assertSee('No records found');
+    }
+
+    public function test_a_reversed_price_range_is_read_the_way_it_was_meant(): void
+    {
+        $inOrder = $this->get('/vinyl?min_price=400000&max_price=700000')->viewData('products')->total();
+        $reversed = $this->get('/vinyl?min_price=700000&max_price=400000')->viewData('products')->total();
+
+        $this->assertGreaterThan(0, $inOrder);
+        $this->assertSame($inOrder, $reversed);
+    }
+
+    // ----- Music discovery: audio previews -----
+
+    public function test_preview_buttons_name_their_record_and_label_their_state(): void
+    {
+        Product::where('slug', 'ok-computer')->update(['audio_preview_url' => 'audio/demo-preview.wav']);
+
+        $this->get('/records/ok-computer')->assertOk()
+            ->assertSee('data-preview-name="OK Computer"', false)
+            ->assertSee('data-preview-label', false);
+    }
 }

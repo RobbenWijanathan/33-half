@@ -174,11 +174,12 @@ class CatalogController extends Controller
             $query->where('condition', $condition);
         }
 
-        if ($term = $filters['q'] ?? null) {
-            $query->where(function (Builder $search) use ($term) {
-                $search->where('name', 'like', '%'.$term.'%')
-                    ->orWhereHas('artists', fn (Builder $artists) => $artists->where('name', 'like', '%'.$term.'%'));
-            });
+        // Search lives on the model (Product::search scope): title, description, artist, genre or label.
+        $query->search($filters['q'] ?? null);
+
+        // A reversed price range is an easy slip; read it the way it was meant.
+        if (isset($filters['min_price'], $filters['max_price']) && $filters['min_price'] > $filters['max_price']) {
+            [$filters['min_price'], $filters['max_price']] = [$filters['max_price'], $filters['min_price']];
         }
 
         foreach (['genre' => 'genres', 'artist' => 'artists'] as $field => $relation) {

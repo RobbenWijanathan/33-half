@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Support\Money;
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -111,6 +112,28 @@ class Product extends Model
     public function scopeVinyl(Builder $query): Builder
     {
         return $query->where('product_type', 'vinyl');
+    }
+
+    /**
+     * Music discovery search: match the term against the title, description, artist, genre or label.
+     * Laravel 12 #[Scope] attribute, used as Product::search($term) or $query->search($term).
+     */
+    #[Scope]
+    protected function search(Builder $query, ?string $term): void
+    {
+        $term = trim((string) $term);
+        if ($term === '') {
+            return;
+        }
+
+        $like = '%'.$term.'%';
+        $query->where(function (Builder $search) use ($like) {
+            $search->where('name', 'like', $like)
+                ->orWhere('description', 'like', $like)
+                ->orWhereHas('artists', fn (Builder $artist) => $artist->where('name', 'like', $like))
+                ->orWhereHas('genres', fn (Builder $genre) => $genre->where('name', 'like', $like))
+                ->orWhereHas('label', fn (Builder $label) => $label->where('name', 'like', $like));
+        });
     }
 
     public function scopeMerchandise(Builder $query): Builder

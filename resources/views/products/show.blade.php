@@ -26,8 +26,7 @@
             <p class="detail-price">{{ $product->formatted_price }}</p>
             <p class="detail-description">{{ $product->description }}</p>
             @if ($product->audio_preview_url)
-                <div class="detail-preview"><x-audio-preview-control :product="$product" /><span>Listen to a short
-                        preview</span></div>
+                <div class="detail-preview"><x-audio-preview-control :product="$product" /><span data-preview-label>Listen to a short preview</span></div>
             @endif
             @if ($product->product_type === 'vinyl')
                 <x-record-condition :product="$product" />

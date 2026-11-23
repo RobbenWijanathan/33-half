@@ -761,7 +761,9 @@ main > .container {
 }
 
 .detail-preview .preview-button {
-    position: static;
+    position: relative;
+    right: auto;
+    bottom: auto;
 }
 
 .add-to-cart-form {
@@ -1041,6 +1043,101 @@ summary {
 
 .is-playing .preview-icon {
     display: none;
+}
+
+/* Preview states: loading pulses the icon, unavailable strikes it through. */
+.is-loading .preview-icon {
+    animation: preview-wait .8s ease-in-out infinite alternate;
+}
+
+.is-unavailable .preview-button,
+.preview-button.is-unavailable {
+    color: var(--muted);
+}
+
+.is-unavailable .preview-icon {
+    text-decoration: line-through;
+}
+
+/* A ring around the button fills over the length of the preview. */
+@property --preview-progress {
+    syntax: '<angle>';
+    inherits: false;
+    initial-value: 0deg;
+}
+
+.preview-button::after {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    pointer-events: none;
+    opacity: 0;
+    background: conic-gradient(var(--accent) var(--preview-progress), transparent 0);
+    -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px));
+    mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px));
+}
+
+.is-playing .preview-button::after,
+.preview-button.is-playing::after {
+    opacity: 1;
+    animation: preview-progress var(--preview-duration, 10s) linear forwards;
+}
+
+.preview-button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+}
+
+/* Catalog: the result count, with the active search as a removable chip. */
+.results-line {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 16px;
+    margin-bottom: 16px;
+}
+
+.results-line .results-count {
+    margin: 0;
+}
+
+.search-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 36px;
+    padding: 0 12px;
+    border: 1px solid currentColor;
+    font-size: .8rem;
+    font-weight: 700;
+}
+
+.search-chip:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--paper);
+}
+
+.search-chip:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+@keyframes preview-progress {
+    to {
+        --preview-progress: 360deg;
+    }
+}
+
+@keyframes preview-wait {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: .25;
+    }
 }
 
 @keyframes meter {
@@ -1369,7 +1466,7 @@ summary {
 .carousel-description p { margin-bottom: 10px; }
 .carousel-genres { color: var(--muted); font-size: .83rem; }
 .carousel-record-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }
-.carousel-record-actions .preview-button { position: static; }
+.carousel-record-actions .preview-button { position: relative; right: auto; bottom: auto; }
 @media (max-width: 575px) {
     .record-carousel { --sleeve-width: 70%; --sleeve-gap: 12px; }
     .carousel-caption-panel { grid-template-columns: 1fr; gap: 16px; }

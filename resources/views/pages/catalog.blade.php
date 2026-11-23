@@ -42,8 +42,20 @@
                 <noscript><button class="button button-dark" type="submit">Update results</button></noscript>
                 <a class="text-link" data-filter-link="reset" href="{{ url()->current() }}">Reset</a>
             </form>
-            <p class="results-count">{{ $products->total() }} {{ Str::plural('item', $products->total()) }}</p>
-            <x-product-grid :products="$products" />
+            @php($term = $filters['q'] ?? null)
+            <div class="results-line">
+                <p class="results-count">{{ $products->total() }} {{ Str::plural('item', $products->total()) }}@if ($term) for “{{ $term }}”@endif</p>
+                @if ($term)
+                    <a class="search-chip" data-filter-link="clear-search" href="{{ request()->fullUrlWithoutQuery(['q', 'page']) }}"><span class="visually-hidden">Clear search </span>Search: “{{ $term }}” <span aria-hidden="true">×</span></a>
+                @endif
+            </div>
+            @if ($products->isEmpty() && $term)
+                <x-empty-state :title="'No matches for “'.$term.'”'"
+                    message="Check the spelling, or try an artist, genre or label name."
+                    action-label="Clear search" :action-url="request()->fullUrlWithoutQuery(['q', 'page'])" />
+            @else
+                <x-product-grid :products="$products" />
+            @endif
             <x-pagination :paginator="$products" />
         </div>
         <p class="visually-hidden" role="status" data-filter-announcement></p>
